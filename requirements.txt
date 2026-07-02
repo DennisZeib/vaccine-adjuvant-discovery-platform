@@ -1,12 +1,8 @@
+streamlit
 numpy
 pandas
-scipy
-scikit-learn
-tqdm
-networkx
-cobrapy
-micom
-rdkit-pypi
 matplotlib
 seaborn
-streamlit
+networkx
+scipy
+cobrapy
