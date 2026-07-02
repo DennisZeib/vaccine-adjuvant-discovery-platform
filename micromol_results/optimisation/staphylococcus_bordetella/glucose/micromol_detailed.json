@@ -1,0 +1,59 @@
+[
+  {
+    "combination": "staphylococcus + bordetella",
+    "microbe_ids": [
+      "staphylococcus",
+      "bordetella"
+    ],
+    "novel_metabolites": [
+      "polysaccharide_lps"
+    ],
+    "novel_metabolite_count": 1,
+    "scores": [
+      {
+        "molecule_id": "polysaccharide_lps",
+        "molecule_name": "LPS (Lipopolysaccharide)",
+        "immunogenicity_score": 0.8999999999999999,
+        "novelty_score": 0.15000000000000002,
+        "toxicity_risk": 0.2,
+        "similarity_to_adjuvants": 0.85,
+        "similarity_to_toxins": 0.2,
+        "overall_vaccine_score": 73.5,
+        "recommendation": "high",
+        "rationale": [
+          "+0.6: Strong vaccine adjuvant pattern",
+          "Adjuvant similarity: 0.850",
+          "Toxin similarity: 0.200",
+          "Immunogenicity: 0.900",
+          "Novelty: 0.150"
+        ]
+      }
+    ],
+    "final_concentrations": {
+      "glucose": 0,
+      "acetate": 0.0,
+      "pyruvate": 0,
+      "lactate": 0.0,
+      "alanine": 0,
+      "glutamate": 0,
+      "alpha_ketoglutarate": 0.0,
+      "ethanol": 0.0,
+      "glycerol": 0,
+      "ATP": 0,
+      "NADH": 0,
+      "ADP": 0.0,
+      "CO2": 0.0,
+      "polysaccharide_lps": 0.1651252010030646,
+      "mannan_polysaccharide": 0.0,
+      "host_proteins": 0.0,
+      "host_nucleotides": 0.0,
+      "viral_rna": 0.0,
+      "viral_capsid": 0.0,
+      "viral_spike_protein": 0.0,
+      "viral_particle_with_spike": 0.0,
+      "teichoic_acid": 0.0,
+      "pertussis_subunit": 0.0
+    },
+    "success": true
+  }
+]

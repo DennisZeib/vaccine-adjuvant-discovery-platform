@@ -1,0 +1,15 @@
+DETOXIFIED LPS PRODUCTION SUMMARY
+
+Best simulated condition:
+- Glucose: 100.0 mM
+- Peak detoxified LPS: 12.831 mM
+- Recommended harvest: peak early (~0.2 h simulated); validate 2-4 h in lab
+
+Notes:
+- Detoxified LPS predicted non-toxic and retains immunogenicity in silico.
+- Use MPLA and wild-type LPS as controls in cellular assays.
+
+Files generated:
+- micromol_results\optimisation\detox_glucose_sweep\detox_summary_plot.png
+- micromol_results\optimisation\detox_glucose_sweep\detox_recommendations.csv
+- micromol_results\optimisation\detox_glucose_sweep\detox_summary.txt

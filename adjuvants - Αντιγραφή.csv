@@ -1,0 +1,8 @@
+id,name,class,smiles
+mpla,Monophosphoryl Lipid A,TLR4 agonist,CC(C)CCCC(C)C(=O)OC1CCCC(C1)OC(=O)C2CCCCC2OC(=O)C(C)C
+imiquimod,Imiquimod,TLR7 agonist,CC1=C(C(=N1)N)NC2=C(C(=CC(=C2)Cl)Cl)Cl
+lps,Lipopolysaccharide,TLR4 ligand,CC(C)CC(C)(C)C(=O)O
+flagellin,Flagellin,TLR5 agonist,C(C(=O)O)N
+cpg,CpG ODN,TLR9 agonist,C1=C(N(C(=O)NC1=O)C2CC(CC(=O)O)O2)N
+qs21,QS-21,Saponin,CC(C)CCCC(C)C(=O)OC1CCCC(C1)OC(=O)C2CCCCC2OC(=O)C(C)C
+alum,Aluminium hydroxide,Particle,[Al+3].O

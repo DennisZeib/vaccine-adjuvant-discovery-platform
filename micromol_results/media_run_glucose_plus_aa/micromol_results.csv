@@ -1,0 +1,106 @@
+Combination,Novel Metabolites Count,Novel Metabolites
+ecoli + yeast,11,"glycerol, NADH, ethanol, CO2, polysaccharide_lps, mannan_polysaccharide, acetate, ATP, alpha_ketoglutarate, ADP, lactate"
+ecoli + flu_virus,1,polysaccharide_lps
+ecoli + bacillus,1,polysaccharide_lps
+ecoli + salmonella,1,polysaccharide_lps
+ecoli + lactobacillus,7,"glycerol, polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, ATP, peptidoglycan"
+ecoli + bacteroides,1,polysaccharide_lps
+ecoli + bifidobacterium,7,"glycerol, exopolysaccharide, polysaccharide_lps, ethanol, CO2, mannan_polysaccharide, ATP"
+ecoli + clostridium,1,polysaccharide_lps
+ecoli + streptococcus,2,"capsular_polysaccharide, polysaccharide_lps"
+ecoli + enterococcus,2,"bacterial_lipoprotein, polysaccharide_lps"
+ecoli + staphylococcus,1,polysaccharide_lps
+ecoli + pseudomonas,2,"polysaccharide_lps, alginate"
+ecoli + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide"
+ecoli + faecalibacterium,1,polysaccharide_lps
+yeast + flu_virus,5,"glycerol, mannan_polysaccharide, ethanol, CO2, ATP"
+yeast + bacillus,12,"glycerol, lipoteichoic_acid, NADH, ethanol, CO2, polysaccharide_lps, mannan_polysaccharide, acetate, alpha_ketoglutarate, flagellin, ADP, lactate"
+yeast + salmonella,11,"glycerol, NADH, ethanol, CO2, polysaccharide_lps, mannan_polysaccharide, acetate, alpha_ketoglutarate, flagellin, ADP, lactate"
+yeast + lactobacillus,6,"glycerol, mannan_polysaccharide, ethanol, CO2, ATP, peptidoglycan"
+yeast + bacteroides,11,"glycerol, NADH, outer_membrane_vesicle, ethanol, CO2, polysaccharide_lps, mannan_polysaccharide, ATP, alpha_ketoglutarate, ADP, lactate"
+yeast + bifidobacterium,6,"glycerol, exopolysaccharide, mannan_polysaccharide, ethanol, CO2, ATP"
+yeast + clostridium,12,"glycerol, NADH, ethanol, CO2, polysaccharide_lps, mannan_polysaccharide, acetate, ATP, butyrate, alpha_ketoglutarate, ADP, lactate"
+yeast + streptococcus,7,"glycerol, polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, capsular_polysaccharide, ATP"
+yeast + enterococcus,12,"glycerol, NADH, ethanol, CO2, polysaccharide_lps, mannan_polysaccharide, acetate, ATP, bacterial_lipoprotein, alpha_ketoglutarate, ADP, lactate"
+yeast + staphylococcus,11,"NADH, ethanol, polysaccharide_lps, CO2, mannan_polysaccharide, acetate, ATP, alpha_ketoglutarate, teichoic_acid, ADP, lactate"
+yeast + pseudomonas,7,"glycerol, polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, ATP, alginate"
+yeast + klebsiella,7,"glycerol, capsule_polysaccharide, ethanol, polysaccharide_lps, CO2, mannan_polysaccharide, ATP"
+yeast + faecalibacterium,11,"glycerol, NADH, polysaccharide_lps, ethanol, CO2, mannan_polysaccharide, ATP, butyrate, alpha_ketoglutarate, ADP, lactate"
+flu_virus + bacillus,1,polysaccharide_lps
+flu_virus + salmonella,1,polysaccharide_lps
+flu_virus + lactobacillus,6,"glycerol, mannan_polysaccharide, ethanol, CO2, ATP, peptidoglycan"
+flu_virus + bacteroides,1,polysaccharide_lps
+flu_virus + bifidobacterium,6,"glycerol, exopolysaccharide, mannan_polysaccharide, ethanol, CO2, ATP"
+flu_virus + clostridium,1,polysaccharide_lps
+flu_virus + streptococcus,2,"capsular_polysaccharide, polysaccharide_lps"
+flu_virus + enterococcus,2,"bacterial_lipoprotein, polysaccharide_lps"
+flu_virus + staphylococcus,1,polysaccharide_lps
+flu_virus + pseudomonas,2,"polysaccharide_lps, alginate"
+flu_virus + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide"
+flu_virus + faecalibacterium,1,polysaccharide_lps
+bacillus + salmonella,1,polysaccharide_lps
+bacillus + lactobacillus,8,"lipoteichoic_acid, mannan_polysaccharide, ethanol, polysaccharide_lps, CO2, ATP, peptidoglycan, flagellin"
+bacillus + bacteroides,1,polysaccharide_lps
+bacillus + bifidobacterium,7,"lipoteichoic_acid, exopolysaccharide, ethanol, polysaccharide_lps, CO2, mannan_polysaccharide, flagellin"
+bacillus + clostridium,1,polysaccharide_lps
+bacillus + streptococcus,2,"capsular_polysaccharide, polysaccharide_lps"
+bacillus + enterococcus,2,"bacterial_lipoprotein, polysaccharide_lps"
+bacillus + staphylococcus,1,polysaccharide_lps
+bacillus + pseudomonas,2,"polysaccharide_lps, alginate"
+bacillus + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide"
+bacillus + faecalibacterium,1,polysaccharide_lps
+salmonella + lactobacillus,8,"glycerol, polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, ATP, peptidoglycan, flagellin"
+salmonella + bacteroides,1,polysaccharide_lps
+salmonella + bifidobacterium,8,"glycerol, exopolysaccharide, polysaccharide_lps, ethanol, CO2, mannan_polysaccharide, ATP, flagellin"
+salmonella + clostridium,1,polysaccharide_lps
+salmonella + streptococcus,2,"capsular_polysaccharide, polysaccharide_lps"
+salmonella + enterococcus,2,"bacterial_lipoprotein, polysaccharide_lps"
+salmonella + staphylococcus,1,polysaccharide_lps
+salmonella + pseudomonas,2,"polysaccharide_lps, alginate"
+salmonella + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide"
+salmonella + faecalibacterium,1,polysaccharide_lps
+lactobacillus + bacteroides,7,"glycerol, polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, ATP, peptidoglycan"
+lactobacillus + bifidobacterium,7,"glycerol, exopolysaccharide, mannan_polysaccharide, ethanol, CO2, ATP, peptidoglycan"
+lactobacillus + clostridium,7,"glycerol, polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, ATP, peptidoglycan"
+lactobacillus + streptococcus,8,"glycerol, polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, capsular_polysaccharide, ATP, peptidoglycan"
+lactobacillus + enterococcus,8,"glycerol, polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, ATP, bacterial_lipoprotein, peptidoglycan"
+lactobacillus + staphylococcus,7,"polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, ATP, peptidoglycan, teichoic_acid"
+lactobacillus + pseudomonas,8,"glycerol, polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, ATP, alginate, peptidoglycan"
+lactobacillus + klebsiella,8,"glycerol, capsule_polysaccharide, ethanol, polysaccharide_lps, CO2, mannan_polysaccharide, ATP, peptidoglycan"
+lactobacillus + faecalibacterium,7,"glycerol, polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, ATP, peptidoglycan"
+bacteroides + bifidobacterium,7,"glycerol, exopolysaccharide, polysaccharide_lps, ethanol, CO2, mannan_polysaccharide, ATP"
+bacteroides + clostridium,1,polysaccharide_lps
+bacteroides + streptococcus,2,"capsular_polysaccharide, polysaccharide_lps"
+bacteroides + enterococcus,2,"bacterial_lipoprotein, polysaccharide_lps"
+bacteroides + staphylococcus,1,polysaccharide_lps
+bacteroides + pseudomonas,2,"polysaccharide_lps, alginate"
+bacteroides + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide"
+bacteroides + faecalibacterium,1,polysaccharide_lps
+bifidobacterium + clostridium,7,"glycerol, exopolysaccharide, polysaccharide_lps, ethanol, CO2, mannan_polysaccharide, ATP"
+bifidobacterium + streptococcus,8,"glycerol, exopolysaccharide, polysaccharide_lps, ethanol, CO2, mannan_polysaccharide, capsular_polysaccharide, ATP"
+bifidobacterium + enterococcus,8,"glycerol, exopolysaccharide, polysaccharide_lps, ethanol, CO2, mannan_polysaccharide, ATP, bacterial_lipoprotein"
+bifidobacterium + staphylococcus,7,"exopolysaccharide, polysaccharide_lps, mannan_polysaccharide, ethanol, CO2, ATP, teichoic_acid"
+bifidobacterium + pseudomonas,8,"glycerol, exopolysaccharide, polysaccharide_lps, ethanol, CO2, mannan_polysaccharide, ATP, alginate"
+bifidobacterium + klebsiella,8,"glycerol, capsule_polysaccharide, exopolysaccharide, ethanol, CO2, polysaccharide_lps, mannan_polysaccharide, ATP"
+bifidobacterium + faecalibacterium,7,"glycerol, exopolysaccharide, polysaccharide_lps, ethanol, CO2, mannan_polysaccharide, ATP"
+clostridium + streptococcus,2,"capsular_polysaccharide, polysaccharide_lps"
+clostridium + enterococcus,2,"bacterial_lipoprotein, polysaccharide_lps"
+clostridium + staphylococcus,1,polysaccharide_lps
+clostridium + pseudomonas,2,"polysaccharide_lps, alginate"
+clostridium + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide"
+clostridium + faecalibacterium,1,polysaccharide_lps
+streptococcus + enterococcus,3,"capsular_polysaccharide, bacterial_lipoprotein, polysaccharide_lps"
+streptococcus + staphylococcus,2,"capsular_polysaccharide, polysaccharide_lps"
+streptococcus + pseudomonas,3,"capsular_polysaccharide, polysaccharide_lps, alginate"
+streptococcus + klebsiella,3,"polysaccharide_lps, capsular_polysaccharide, capsule_polysaccharide"
+streptococcus + faecalibacterium,2,"capsular_polysaccharide, polysaccharide_lps"
+enterococcus + staphylococcus,2,"bacterial_lipoprotein, polysaccharide_lps"
+enterococcus + pseudomonas,3,"bacterial_lipoprotein, polysaccharide_lps, alginate"
+enterococcus + klebsiella,3,"polysaccharide_lps, bacterial_lipoprotein, capsule_polysaccharide"
+enterococcus + faecalibacterium,2,"bacterial_lipoprotein, polysaccharide_lps"
+staphylococcus + pseudomonas,2,"polysaccharide_lps, alginate"
+staphylococcus + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide"
+staphylococcus + faecalibacterium,1,polysaccharide_lps
+pseudomonas + klebsiella,3,"polysaccharide_lps, capsule_polysaccharide, alginate"
+pseudomonas + faecalibacterium,2,"polysaccharide_lps, alginate"
+klebsiella + faecalibacterium,2,"polysaccharide_lps, capsule_polysaccharide"

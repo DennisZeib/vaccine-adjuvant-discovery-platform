@@ -1,0 +1,17 @@
+combination,molecule_id,score,final_concentration
+ecoli + yeast,mannan_polysaccharide,70.5,0.1935200714906488
+ecoli + yeast,polysaccharide_lps,73.5,0.25165284934317567
+ecoli + bacillus,polysaccharide_lps,73.5,1.8423267410990654
+ecoli + salmonella,polysaccharide_lps,73.5,1.8423267410990654
+ecoli + lactobacillus,mannan_polysaccharide,70.5,0.39835426172950344
+ecoli + lactobacillus,polysaccharide_lps,73.5,0.17574238961240132
+yeast + bacillus,polysaccharide_lps,73.5,0.2516528493431755
+yeast + bacillus,mannan_polysaccharide,70.5,0.1935200714906488
+yeast + salmonella,polysaccharide_lps,73.5,0.2516528493431755
+yeast + salmonella,mannan_polysaccharide,70.5,0.1935200714906488
+yeast + lactobacillus,mannan_polysaccharide,70.5,0.39835426172950344
+bacillus + salmonella,polysaccharide_lps,73.5,1.8423267410990654
+bacillus + lactobacillus,mannan_polysaccharide,70.5,0.39835426172950344
+bacillus + lactobacillus,polysaccharide_lps,73.5,0.17574238961240132
+salmonella + lactobacillus,mannan_polysaccharide,70.5,0.39835426172950344
+salmonella + lactobacillus,polysaccharide_lps,73.5,0.17574238961240132

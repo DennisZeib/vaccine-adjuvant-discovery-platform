@@ -1,0 +1,39 @@
+[
+  {
+    "combination": "clostridium + helicobacter",
+    "microbe_ids": [
+      "clostridium",
+      "helicobacter"
+    ],
+    "novel_metabolites": [],
+    "novel_metabolite_count": 0,
+    "scores": [],
+    "final_concentrations": {
+      "lactate": 0.16066578580973367,
+      "glucose": 0,
+      "acetate": 0.0,
+      "pyruvate": 0,
+      "alanine": 0.0,
+      "glutamate": 0,
+      "alpha_ketoglutarate": 0.0,
+      "ethanol": 0.0,
+      "glycerol": 0.0,
+      "ATP": 0,
+      "NADH": 0,
+      "ADP": 0.0,
+      "CO2": 0.0,
+      "polysaccharide_lps": 0.0,
+      "mannan_polysaccharide": 0.0,
+      "host_proteins": 0.0,
+      "host_nucleotides": 0.0,
+      "viral_rna": 0.0,
+      "viral_capsid": 0.0,
+      "viral_spike_protein": 0.0,
+      "viral_particle_with_spike": 0.0,
+      "butyrate": 0.0,
+      "urea": 0,
+      "ammonia": 0.0
+    },
+    "success": true
+  }
+]

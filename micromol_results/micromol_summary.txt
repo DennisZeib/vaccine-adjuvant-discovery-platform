@@ -1,0 +1,39 @@
+======================================================================
+MICROMOL COMBINATION SIMULATOR - SUMMARY REPORT
+======================================================================
+
+Timestamp: 2026-06-05 18:35:34
+
+MONOCULTURE RESULTS (3 runs):
+----------------------------------------------------------------------
+  ecoli
+    Novel metabolites: 1
+  yeast
+    Novel metabolites: 5
+  flu_virus
+    Novel metabolites: 0
+
+COMBINATION RESULTS (3 combinations):
+----------------------------------------------------------------------
+TOP 5 CANDIDATES (by vaccine potential):
+
+  1. ecoli + yeast
+     Novel metabolites: 6
+     Best candidate: LPS (Lipopolysaccharide)
+     Vaccine score: 73.5/100
+     Recommendation: high
+
+  2. ecoli + flu_virus
+     Novel metabolites: 1
+     Best candidate: LPS (Lipopolysaccharide)
+     Vaccine score: 73.5/100
+     Recommendation: high
+
+  3. yeast + flu_virus
+     Novel metabolites: 5
+     Best candidate: Mannan
+     Vaccine score: 70.5/100
+     Recommendation: high
+
+======================================================================
+END OF REPORT

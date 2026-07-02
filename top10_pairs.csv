@@ -1,0 +1,11 @@
+microbe_a,microbe_b,LPS,mannan,flagellin,score,toxicity
+salmonella,bordetella,0.8113207250262738,0.0,0.0,218.5,0.0
+salmonella,pseudomonas,0.5741634420772324,0.0,0.0,218.5,0.0
+salmonella,streptococcus,0.5824028773525575,0.0,0.0,218.5,0.0
+salmonella,clostridium,0.8113207250262738,0.0,0.0,218.5,0.0
+salmonella,bacteroides,0.8113207250262738,0.0,0.0,218.5,0.0
+bacillus,legionella,0.8113207250262738,0.0,0.0,218.5,0.0
+bacillus,helicobacter,0.8113207250262738,0.0,0.0,218.5,0.0
+bacillus,vibrio,0.8113207250262738,0.0,0.0,218.5,0.0
+bacillus,bordetella,0.8113207250262738,0.0,0.0,218.5,0.0
+bacillus,mycobacterium,0.8113207250262738,0.0,0.0,218.5,0.0

@@ -1,0 +1,22 @@
+======================================================================
+MICROMOL COMBINATION SIMULATOR - SUMMARY REPORT
+======================================================================
+
+Timestamp: 2026-06-05 19:54:12
+
+MONOCULTURE RESULTS (2 runs):
+----------------------------------------------------------------------
+  clostridium
+    Novel metabolites: 0
+  legionella
+    Novel metabolites: 0
+
+COMBINATION RESULTS (1 combinations):
+----------------------------------------------------------------------
+TOP 5 CANDIDATES (by vaccine potential):
+
+  1. clostridium + legionella
+     Novel metabolites: 0
+
+======================================================================
+END OF REPORT

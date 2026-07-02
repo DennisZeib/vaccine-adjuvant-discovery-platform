@@ -1,0 +1,191 @@
+Combination,Novel Metabolites Count,Novel Metabolites,Best Vaccine Score,Best Recommendation
+ecoli + yeast,10,"mannan_polysaccharide, NADH, acetate, ethanol, glycerol, lactate, CO2, ADP, polysaccharide_lps, ATP",73.5,high
+ecoli + flu_virus,1,polysaccharide_lps,73.5,high
+ecoli + bacillus,1,polysaccharide_lps,73.5,high
+ecoli + salmonella,1,polysaccharide_lps,73.5,high
+ecoli + lactobacillus,6,"mannan_polysaccharide, ethanol, glycerol, CO2, polysaccharide_lps, ATP",73.5,high
+ecoli + bacteroides,1,polysaccharide_lps,73.5,high
+ecoli + bifidobacterium,7,"mannan_polysaccharide, ethanol, glycerol, CO2, exopolysaccharide, polysaccharide_lps, ATP",73.5,high
+ecoli + clostridium,1,polysaccharide_lps,73.5,high
+ecoli + streptococcus,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+ecoli + enterococcus,1,polysaccharide_lps,73.5,high
+ecoli + staphylococcus,1,polysaccharide_lps,73.5,high
+ecoli + pseudomonas,2,"polysaccharide_lps, alginate",73.5,high
+ecoli + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+ecoli + faecalibacterium,1,polysaccharide_lps,73.5,high
+ecoli + mycobacterium,1,polysaccharide_lps,73.5,high
+ecoli + bordetella,1,polysaccharide_lps,73.5,high
+ecoli + vibrio,1,polysaccharide_lps,73.5,high
+ecoli + helicobacter,1,polysaccharide_lps,73.5,high
+ecoli + legionella,1,polysaccharide_lps,73.5,high
+yeast + bacillus,10,"lipoteichoic_acid, polysaccharide_lps, acetate, lactate, NADH, ethanol, CO2, mannan_polysaccharide, ADP, ATP",73.5,high
+yeast + salmonella,10,"polysaccharide_lps, acetate, lactate, NADH, ethanol, CO2, mannan_polysaccharide, ADP, ATP, glycerol",73.5,high
+yeast + bacteroides,10,"polysaccharide_lps, lactate, NADH, ethanol, CO2, mannan_polysaccharide, outer_membrane_vesicle, ADP, ATP, glycerol",73.5,high
+yeast + clostridium,11,"NADH, butyrate, acetate, lactate, ethanol, glycerol, polysaccharide_lps, mannan_polysaccharide, ADP, CO2, ATP",73.5,high
+yeast + streptococcus,7,"polysaccharide_lps, ethanol, capsular_polysaccharide, glycerol, mannan_polysaccharide, CO2, ATP",73.5,high
+yeast + enterococcus,10,"NADH, acetate, lactate, ethanol, glycerol, polysaccharide_lps, mannan_polysaccharide, ADP, CO2, ATP",73.5,high
+yeast + staphylococcus,10,"NADH, acetate, lactate, ethanol, polysaccharide_lps, mannan_polysaccharide, ADP, CO2, teichoic_acid, ATP",73.5,high
+yeast + pseudomonas,7,"polysaccharide_lps, ethanol, glycerol, mannan_polysaccharide, CO2, ATP, alginate",73.5,high
+yeast + klebsiella,7,"polysaccharide_lps, ethanol, glycerol, mannan_polysaccharide, CO2, ATP, capsule_polysaccharide",73.5,high
+yeast + faecalibacterium,10,"NADH, butyrate, lactate, ethanol, glycerol, polysaccharide_lps, mannan_polysaccharide, ADP, CO2, ATP",73.5,high
+yeast + mycobacterium,10,"NADH, acetate, lactate, ethanol, glycerol, polysaccharide_lps, mannan_polysaccharide, ADP, CO2, ATP",73.5,high
+yeast + bordetella,10,"NADH, acetate, lactate, ethanol, glycerol, polysaccharide_lps, mannan_polysaccharide, ADP, CO2, ATP",73.5,high
+yeast + vibrio,10,"NADH, acetate, lactate, ethanol, glycerol, polysaccharide_lps, mannan_polysaccharide, ADP, CO2, ATP",73.5,high
+yeast + helicobacter,10,"NADH, acetate, lactate, ethanol, glycerol, polysaccharide_lps, mannan_polysaccharide, ADP, CO2, ATP",73.5,high
+yeast + legionella,10,"acetate, ADP, lactate, mannan_polysaccharide, NADH, polysaccharide_lps, ATP, CO2, ethanol, glycerol",73.5,high
+flu_virus + bacillus,1,polysaccharide_lps,73.5,high
+flu_virus + salmonella,1,polysaccharide_lps,73.5,high
+flu_virus + bacteroides,1,polysaccharide_lps,73.5,high
+flu_virus + clostridium,1,polysaccharide_lps,73.5,high
+flu_virus + streptococcus,2,"capsular_polysaccharide, polysaccharide_lps",73.5,high
+flu_virus + enterococcus,1,polysaccharide_lps,73.5,high
+flu_virus + staphylococcus,1,polysaccharide_lps,73.5,high
+flu_virus + pseudomonas,2,"polysaccharide_lps, alginate",73.5,high
+flu_virus + klebsiella,2,"capsule_polysaccharide, polysaccharide_lps",73.5,high
+flu_virus + faecalibacterium,1,polysaccharide_lps,73.5,high
+flu_virus + mycobacterium,1,polysaccharide_lps,73.5,high
+flu_virus + bordetella,1,polysaccharide_lps,73.5,high
+flu_virus + vibrio,1,polysaccharide_lps,73.5,high
+flu_virus + helicobacter,1,polysaccharide_lps,73.5,high
+flu_virus + legionella,1,polysaccharide_lps,73.5,high
+bacillus + salmonella,1,polysaccharide_lps,73.5,high
+bacillus + lactobacillus,6,"mannan_polysaccharide, ethanol, CO2, polysaccharide_lps, lipoteichoic_acid, ATP",73.5,high
+bacillus + bacteroides,1,polysaccharide_lps,73.5,high
+bacillus + bifidobacterium,7,"mannan_polysaccharide, ethanol, CO2, exopolysaccharide, polysaccharide_lps, lipoteichoic_acid, ATP",73.5,high
+bacillus + clostridium,1,polysaccharide_lps,73.5,high
+bacillus + streptococcus,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+bacillus + enterococcus,1,polysaccharide_lps,73.5,high
+bacillus + staphylococcus,1,polysaccharide_lps,73.5,high
+bacillus + pseudomonas,2,"polysaccharide_lps, alginate",73.5,high
+bacillus + klebsiella,2,"capsule_polysaccharide, polysaccharide_lps",73.5,high
+bacillus + faecalibacterium,1,polysaccharide_lps,73.5,high
+bacillus + mycobacterium,1,polysaccharide_lps,73.5,high
+bacillus + bordetella,1,polysaccharide_lps,73.5,high
+bacillus + vibrio,1,polysaccharide_lps,73.5,high
+bacillus + helicobacter,1,polysaccharide_lps,73.5,high
+bacillus + legionella,1,polysaccharide_lps,73.5,high
+salmonella + lactobacillus,6,"mannan_polysaccharide, polysaccharide_lps, ATP, CO2, ethanol, glycerol",73.5,high
+salmonella + bacteroides,1,polysaccharide_lps,73.5,high
+salmonella + bifidobacterium,7,"exopolysaccharide, ethanol, mannan_polysaccharide, CO2, polysaccharide_lps, ATP, glycerol",73.5,high
+salmonella + clostridium,1,polysaccharide_lps,73.5,high
+salmonella + streptococcus,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+salmonella + enterococcus,1,polysaccharide_lps,73.5,high
+salmonella + staphylococcus,1,polysaccharide_lps,73.5,high
+salmonella + pseudomonas,2,"polysaccharide_lps, alginate",73.5,high
+salmonella + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+salmonella + faecalibacterium,1,polysaccharide_lps,73.5,high
+salmonella + mycobacterium,1,polysaccharide_lps,73.5,high
+salmonella + bordetella,1,polysaccharide_lps,73.5,high
+salmonella + vibrio,1,polysaccharide_lps,73.5,high
+salmonella + helicobacter,1,polysaccharide_lps,73.5,high
+salmonella + legionella,1,polysaccharide_lps,73.5,high
+lactobacillus + bacteroides,6,"polysaccharide_lps, ethanol, glycerol, mannan_polysaccharide, CO2, ATP",73.5,high
+lactobacillus + clostridium,6,"polysaccharide_lps, ethanol, glycerol, mannan_polysaccharide, CO2, ATP",73.5,high
+lactobacillus + streptococcus,7,"polysaccharide_lps, ethanol, capsular_polysaccharide, glycerol, mannan_polysaccharide, CO2, ATP",73.5,high
+lactobacillus + enterococcus,6,"polysaccharide_lps, ethanol, glycerol, mannan_polysaccharide, CO2, ATP",73.5,high
+lactobacillus + staphylococcus,6,"polysaccharide_lps, ethanol, mannan_polysaccharide, CO2, teichoic_acid, ATP",73.5,high
+lactobacillus + pseudomonas,7,"polysaccharide_lps, ethanol, glycerol, mannan_polysaccharide, CO2, ATP, alginate",73.5,high
+lactobacillus + klebsiella,7,"polysaccharide_lps, ethanol, glycerol, mannan_polysaccharide, CO2, ATP, capsule_polysaccharide",73.5,high
+lactobacillus + faecalibacterium,6,"polysaccharide_lps, ethanol, glycerol, mannan_polysaccharide, CO2, ATP",73.5,high
+lactobacillus + mycobacterium,6,"polysaccharide_lps, ethanol, glycerol, mannan_polysaccharide, CO2, ATP",73.5,high
+lactobacillus + bordetella,6,"polysaccharide_lps, ethanol, glycerol, mannan_polysaccharide, CO2, ATP",73.5,high
+lactobacillus + vibrio,6,"mannan_polysaccharide, ethanol, glycerol, CO2, polysaccharide_lps, ATP",73.5,high
+lactobacillus + helicobacter,6,"mannan_polysaccharide, ethanol, glycerol, CO2, polysaccharide_lps, ATP",73.5,high
+lactobacillus + legionella,6,"mannan_polysaccharide, ethanol, glycerol, CO2, polysaccharide_lps, ATP",73.5,high
+bacteroides + bifidobacterium,7,"mannan_polysaccharide, ethanol, glycerol, CO2, exopolysaccharide, polysaccharide_lps, ATP",73.5,high
+bacteroides + clostridium,1,polysaccharide_lps,73.5,high
+bacteroides + streptococcus,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+bacteroides + enterococcus,1,polysaccharide_lps,73.5,high
+bacteroides + staphylococcus,1,polysaccharide_lps,73.5,high
+bacteroides + pseudomonas,2,"polysaccharide_lps, alginate",73.5,high
+bacteroides + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+bacteroides + faecalibacterium,1,polysaccharide_lps,73.5,high
+bacteroides + mycobacterium,1,polysaccharide_lps,73.5,high
+bacteroides + bordetella,1,polysaccharide_lps,73.5,high
+bacteroides + vibrio,1,polysaccharide_lps,73.5,high
+bacteroides + helicobacter,1,polysaccharide_lps,73.5,high
+bacteroides + legionella,1,polysaccharide_lps,73.5,high
+bifidobacterium + clostridium,7,"exopolysaccharide, mannan_polysaccharide, polysaccharide_lps, ATP, CO2, ethanol, glycerol",73.5,high
+bifidobacterium + streptococcus,8,"exopolysaccharide, mannan_polysaccharide, polysaccharide_lps, ATP, capsular_polysaccharide, CO2, ethanol, glycerol",73.5,high
+bifidobacterium + enterococcus,7,"exopolysaccharide, mannan_polysaccharide, polysaccharide_lps, ATP, CO2, ethanol, glycerol",73.5,high
+bifidobacterium + staphylococcus,7,"teichoic_acid, exopolysaccharide, mannan_polysaccharide, polysaccharide_lps, ATP, CO2, ethanol",73.5,high
+bifidobacterium + pseudomonas,8,"alginate, exopolysaccharide, mannan_polysaccharide, polysaccharide_lps, ATP, CO2, ethanol, glycerol",73.5,high
+bifidobacterium + klebsiella,8,"capsule_polysaccharide, exopolysaccharide, mannan_polysaccharide, polysaccharide_lps, ATP, CO2, ethanol, glycerol",73.5,high
+bifidobacterium + faecalibacterium,7,"exopolysaccharide, mannan_polysaccharide, polysaccharide_lps, ATP, CO2, ethanol, glycerol",73.5,high
+bifidobacterium + mycobacterium,7,"exopolysaccharide, mannan_polysaccharide, polysaccharide_lps, ATP, CO2, ethanol, glycerol",73.5,high
+bifidobacterium + bordetella,7,"exopolysaccharide, ethanol, mannan_polysaccharide, CO2, polysaccharide_lps, ATP, glycerol",73.5,high
+bifidobacterium + vibrio,7,"exopolysaccharide, ethanol, mannan_polysaccharide, CO2, polysaccharide_lps, ATP, glycerol",73.5,high
+bifidobacterium + helicobacter,7,"exopolysaccharide, ethanol, mannan_polysaccharide, CO2, polysaccharide_lps, ATP, glycerol",73.5,high
+bifidobacterium + legionella,7,"exopolysaccharide, ethanol, mannan_polysaccharide, CO2, polysaccharide_lps, ATP, glycerol",73.5,high
+clostridium + streptococcus,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+clostridium + enterococcus,1,polysaccharide_lps,73.5,high
+clostridium + staphylococcus,1,polysaccharide_lps,73.5,high
+clostridium + pseudomonas,2,"polysaccharide_lps, alginate",73.5,high
+clostridium + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+clostridium + faecalibacterium,1,polysaccharide_lps,73.5,high
+clostridium + mycobacterium,1,polysaccharide_lps,73.5,high
+clostridium + bordetella,1,polysaccharide_lps,73.5,high
+clostridium + vibrio,1,polysaccharide_lps,73.5,high
+clostridium + helicobacter,1,polysaccharide_lps,73.5,high
+clostridium + legionella,1,polysaccharide_lps,73.5,high
+streptococcus + enterococcus,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+streptococcus + staphylococcus,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+streptococcus + pseudomonas,3,"capsular_polysaccharide, polysaccharide_lps, alginate",73.5,high
+streptococcus + klebsiella,3,"capsular_polysaccharide, polysaccharide_lps, capsule_polysaccharide",73.5,high
+streptococcus + faecalibacterium,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+streptococcus + mycobacterium,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+streptococcus + bordetella,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+streptococcus + vibrio,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+streptococcus + helicobacter,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+streptococcus + legionella,2,"polysaccharide_lps, capsular_polysaccharide",73.5,high
+enterococcus + staphylococcus,1,polysaccharide_lps,73.5,high
+enterococcus + pseudomonas,2,"polysaccharide_lps, alginate",73.5,high
+enterococcus + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+enterococcus + faecalibacterium,1,polysaccharide_lps,73.5,high
+enterococcus + mycobacterium,1,polysaccharide_lps,73.5,high
+enterococcus + bordetella,1,polysaccharide_lps,73.5,high
+enterococcus + vibrio,1,polysaccharide_lps,73.5,high
+enterococcus + helicobacter,1,polysaccharide_lps,73.5,high
+enterococcus + legionella,1,polysaccharide_lps,73.5,high
+staphylococcus + pseudomonas,2,"polysaccharide_lps, alginate",73.5,high
+staphylococcus + klebsiella,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+staphylococcus + faecalibacterium,1,polysaccharide_lps,73.5,high
+staphylococcus + mycobacterium,1,polysaccharide_lps,73.5,high
+staphylococcus + bordetella,1,polysaccharide_lps,73.5,high
+staphylococcus + vibrio,1,polysaccharide_lps,73.5,high
+staphylococcus + helicobacter,1,polysaccharide_lps,73.5,high
+staphylococcus + legionella,1,polysaccharide_lps,73.5,high
+pseudomonas + klebsiella,3,"capsule_polysaccharide, polysaccharide_lps, alginate",73.5,high
+pseudomonas + faecalibacterium,2,"polysaccharide_lps, alginate",73.5,high
+pseudomonas + mycobacterium,2,"polysaccharide_lps, alginate",73.5,high
+pseudomonas + bordetella,2,"polysaccharide_lps, alginate",73.5,high
+pseudomonas + vibrio,2,"polysaccharide_lps, alginate",73.5,high
+pseudomonas + helicobacter,2,"polysaccharide_lps, alginate",73.5,high
+pseudomonas + legionella,2,"polysaccharide_lps, alginate",73.5,high
+klebsiella + faecalibacterium,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+klebsiella + mycobacterium,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+klebsiella + bordetella,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+klebsiella + vibrio,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+klebsiella + helicobacter,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+klebsiella + legionella,2,"polysaccharide_lps, capsule_polysaccharide",73.5,high
+faecalibacterium + mycobacterium,1,polysaccharide_lps,73.5,high
+faecalibacterium + bordetella,1,polysaccharide_lps,73.5,high
+faecalibacterium + vibrio,1,polysaccharide_lps,73.5,high
+faecalibacterium + helicobacter,1,polysaccharide_lps,73.5,high
+faecalibacterium + legionella,1,polysaccharide_lps,73.5,high
+mycobacterium + bordetella,1,polysaccharide_lps,73.5,high
+mycobacterium + vibrio,1,polysaccharide_lps,73.5,high
+mycobacterium + helicobacter,1,polysaccharide_lps,73.5,high
+mycobacterium + legionella,1,polysaccharide_lps,73.5,high
+bordetella + vibrio,1,polysaccharide_lps,73.5,high
+bordetella + helicobacter,1,polysaccharide_lps,73.5,high
+bordetella + legionella,1,polysaccharide_lps,73.5,high
+vibrio + helicobacter,1,polysaccharide_lps,73.5,high
+vibrio + legionella,1,polysaccharide_lps,73.5,high
+helicobacter + legionella,1,polysaccharide_lps,73.5,high
+yeast + flu_virus,5,"mannan_polysaccharide, CO2, ethanol, ATP, glycerol",70.5,high
+yeast + lactobacillus,5,"mannan_polysaccharide, CO2, ethanol, ATP, glycerol",70.5,high
+yeast + bifidobacterium,6,"ethanol, glycerol, mannan_polysaccharide, exopolysaccharide, CO2, ATP",70.5,high
+flu_virus + lactobacillus,5,"mannan_polysaccharide, ATP, CO2, ethanol, glycerol",70.5,high
+flu_virus + bifidobacterium,6,"exopolysaccharide, mannan_polysaccharide, ATP, CO2, ethanol, glycerol",70.5,high
+lactobacillus + bifidobacterium,6,"ethanol, glycerol, mannan_polysaccharide, exopolysaccharide, CO2, ATP",70.5,high

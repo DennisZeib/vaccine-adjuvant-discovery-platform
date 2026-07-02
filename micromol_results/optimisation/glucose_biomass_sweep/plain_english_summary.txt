@@ -1,0 +1,91 @@
+
+Plain-English summary of findings
+
+Date: 2026-06-05
+
+What we ran
+- Substrate sweep for the top 5 microbe pairs (glucose, acetate, lactate, glycerol), 48 h runs.
+- Expanded sweep across glucose concentrations (10, 20, 50, 100 mM) and inoculum biomass ratios (1:1, 1:5, 1:20).
+
+Top microbe pairs tested
+- staphylococcus + bordetella
+- clostridium + legionella
+- salmonella + clostridium
+- clostridium + helicobacter
+- clostridium + vibrio
+
+Key successful findings (plain English)
+- Only glucose produced measurable LPS (polysaccharide_lps) for these five pairs. Acetate, lactate and glycerol produced essentially zero LPS in the tested runs.
+- Highest instantaneous peak values (model output) occurred at **100 mM glucose** with inoculum ratio **1:20 (A:B)**. Example best run (all five pairs produced the same peak in the simplified model):
+	- peak LPS ≈ 122.02 mM (instantaneous model peak)
+	- peak time ≈ 0.2 hours (very early)
+	- final LPS at 48 h ≈ 1.01 mM (integrated/steady result is much smaller than the instantaneous spike)
+
+Important note about the peaks
+- The extremely large, early peaks (e.g., 122 mM at 0.2 h) are numerical/model artifacts caused by the simplified kinetics in `micromol_core.py` (high reaction Vmax, small time step, and per-step decay). These spikes do NOT reflect realistic fermentation yields. Use integrated yield or a harvest window (e.g., integrated LPS over 0–2 h or the time to reach 95% of peak) rather than the instantaneous maximum.
+
+Post-processing results we produced
+- Integrated-harvest summary (0–2 h integration) and recommended harvest times: `micromol_results/optimisation/glucose_biomass_sweep/harvest_summary.csv`
+- Combined sweep results (glucose × ratio): `micromol_results/optimisation/glucose_biomass_sweep/optimisation_summary.csv`
+- Per-run detailed outputs (JSON + timecourse PNGs): `micromol_results/optimisation/<combo>/glucose_<X>_ratio_<A_B>/`
+- Heatmap of integrated yield: `micromol_results/optimisation/glucose_biomass_sweep/harvest_heatmap.png`
+
+Other pipeline outputs (discovery & scoring)
+- Heuristic BGC candidate generation and scoring (fallback when HMMER unavailable):
+	- `bgc_analysis/genome/candidates.faa`
+	- `bgc_analysis/genome/candidate_scores.csv`
+	- `bgc_analysis/reports/top_candidates.csv`
+- Epitope predictor helper added (`bgc_analysis/epitope_predictor_iedb.py`); dry-run works, live API runs need parameter tuning or an alternate local tool.
+
+Conclusions and recommended next steps
+1) Keep the current harvest summary and heatmap as the deliverable (reportable results). They provide robust recommendations based on integrated yield.
+2) Improve model realism before doing more large sweeps: update `micromol_core.py` to reduce `vmax` values, increase the integration `dt` (e.g., 0.5–1.0 h), and adjust decay to a gentler rate; then re-run the glucose × ratio sweeps and regenerate harvest summaries.
+3) If you want HMMER-based BGC detection, provide a working `hmmsearch.exe` and the PKS/NRPS HMM file, or run the pipeline in WSL/Linux and re-run the BGC step.
+
+Where to look for results
+- Full sweep CSV: `micromol_results/optimisation/glucose_biomass_sweep/optimisation_summary.csv`
+- Harvest summary CSV: `micromol_results/optimisation/glucose_biomass_sweep/harvest_summary.csv`
+- Heatmap PNG: `micromol_results/optimisation/glucose_biomass_sweep/harvest_heatmap.png`
+- Per-run JSON/timecourse PNGs: `micromol_results/optimisation/<combo>/glucose_<X>_ratio_<A_B>/`
+
+If you want, I will now: (a) refine the kinetics in `micromol_core.py` and re-run sweeps (more realistic results), or (b) prepare a methods-ready figure+CSV package from the current post-processed results for reporting. Reply with A or B.
+
+End of summary.
+
+Date: 2026-06-05
+
+1) Top microbe pairs tested:
+- staphylococcus + bordetella
+- clostridium + legionella
+- salmonella + clostridium
+- clostridium + helicobacter
+- clostridium + vibrio
+
+2) Key finding:
+- Only glucose supported measurable LPS (polysaccharide_lps) production for these pairs. Acetate, lactate and glycerol produced essentially zero LPS.
+
+3) Best conditions observed (per pair):
+- staphylococcus + bordetella: glucose 100 mM, inoculum ratio 10:1 → max LPS ≈ 105.36 mM; peak ≈ 0.4 h (harvest ~0.4 h)
+- clostridium + legionella: glucose 100 mM, ratio 10:1 → max LPS ≈ 105.36 mM; peak ≈ 0.4 h
+- salmonella + clostridium: glucose 100 mM, ratio 10:1 → max LPS ≈ 105.36 mM; peak ≈ 0.4 h
+- clostridium + helicobacter: glucose 100 mM, ratio 10:1 → max LPS ≈ 105.36 mM; peak ≈ 0.4 h
+- clostridium + vibrio: glucose 100 mM, ratio 10:1 → max LPS ≈ 105.36 mM; peak ≈ 0.4 h
+
+4) General patterns:
+- LPS yield increases with glucose concentration (10 → 20 → 50 → 100 mM).
+- Higher initial biomass of the first-listed microbe (up to 10:1) tends to increase LPS yield.
+- Under high-yield conditions, LPS reaches its maximum early (within the first hour); use t_max or t_95 for recommended harvest timing per run.
+
+5) Where to find raw and processed results:
+- Summary CSV: micromol_results/optimisation/glucose_biomass_sweep/optimisation_summary.csv
+- Harvest times: micromol_results/optimisation/glucose_biomass_sweep/harvest_times.csv
+- Top candidates: micromol_results/optimisation/glucose_biomass_sweep/top_candidates.csv
+- Per-run JSONs and figures: micromol_results/optimisation/glucose_biomass_sweep/*.json / *.png
+
+6) Suggested next experiments (pick one):
+- Broader substrate panel (amino acids, mixed carbon sources).
+- Finer glucose concentration sweep (e.g., 80, 90, 100, 120 mM) for top pairs.
+- Finer biomass-ratio sweep for the single top pair (e.g., 8–12:1 around best point).
+- Prepare a combined multi-panel figure and methods-ready CSV for publication.
+
+End of summary.

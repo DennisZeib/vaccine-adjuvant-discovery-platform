@@ -1,0 +1,4 @@
+Combination,Novel Metabolites Count,Novel Metabolites,Best Vaccine Score,Best Recommendation
+ecoli + yeast,6,"CO2, ethanol, polysaccharide_lps, glycerol, mannan_polysaccharide, ATP",73.5,high
+ecoli + flu_virus,1,polysaccharide_lps,73.5,high
+yeast + flu_virus,5,"CO2, ethanol, glycerol, mannan_polysaccharide, ATP",70.5,high

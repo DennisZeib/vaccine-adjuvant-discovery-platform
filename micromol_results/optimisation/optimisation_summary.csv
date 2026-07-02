@@ -1,0 +1,21 @@
+combination,microbes,target_metabolite,substrate,final_concentration
+salmonella + clostridium,salmonella + clostridium,polysaccharide_lps,glucose,0.1651252010030646
+salmonella + clostridium,salmonella + clostridium,polysaccharide_lps,acetate,0.0
+salmonella + clostridium,salmonella + clostridium,polysaccharide_lps,lactate,0.0
+salmonella + clostridium,salmonella + clostridium,polysaccharide_lps,glycerol,0.0
+staphylococcus + bordetella,staphylococcus + bordetella,polysaccharide_lps,glucose,0.1651252010030646
+staphylococcus + bordetella,staphylococcus + bordetella,polysaccharide_lps,acetate,0.0
+staphylococcus + bordetella,staphylococcus + bordetella,polysaccharide_lps,lactate,0.0
+staphylococcus + bordetella,staphylococcus + bordetella,polysaccharide_lps,glycerol,0.0
+clostridium + legionella,clostridium + legionella,polysaccharide_lps,glucose,0.1651252010030646
+clostridium + legionella,clostridium + legionella,polysaccharide_lps,acetate,0.0
+clostridium + legionella,clostridium + legionella,polysaccharide_lps,lactate,0.0
+clostridium + legionella,clostridium + legionella,polysaccharide_lps,glycerol,0.0
+clostridium + helicobacter,clostridium + helicobacter,polysaccharide_lps,glucose,0.1651252010030646
+clostridium + helicobacter,clostridium + helicobacter,polysaccharide_lps,acetate,0.0
+clostridium + helicobacter,clostridium + helicobacter,polysaccharide_lps,lactate,0.0
+clostridium + helicobacter,clostridium + helicobacter,polysaccharide_lps,glycerol,0.0
+clostridium + vibrio,clostridium + vibrio,polysaccharide_lps,glucose,0.1651252010030646
+clostridium + vibrio,clostridium + vibrio,polysaccharide_lps,acetate,0.0
+clostridium + vibrio,clostridium + vibrio,polysaccharide_lps,lactate,0.0
+clostridium + vibrio,clostridium + vibrio,polysaccharide_lps,glycerol,0.0

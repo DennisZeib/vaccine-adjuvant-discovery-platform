@@ -1,0 +1,85 @@
+======================================================================
+MICROMOL COMBINATION SIMULATOR - SUMMARY REPORT
+======================================================================
+
+Timestamp: 2026-06-05 19:47:09
+
+MONOCULTURE RESULTS (20 runs):
+----------------------------------------------------------------------
+  ecoli
+    Novel metabolites: 1
+  yeast
+    Novel metabolites: 5
+  flu_virus
+    Novel metabolites: 0
+  bacillus
+    Novel metabolites: 1
+  salmonella
+    Novel metabolites: 1
+  lactobacillus
+    Novel metabolites: 5
+  bacteroides
+    Novel metabolites: 1
+  bifidobacterium
+    Novel metabolites: 6
+  clostridium
+    Novel metabolites: 1
+  streptococcus
+    Novel metabolites: 2
+  enterococcus
+    Novel metabolites: 1
+  staphylococcus
+    Novel metabolites: 1
+  pseudomonas
+    Novel metabolites: 2
+  klebsiella
+    Novel metabolites: 2
+  faecalibacterium
+    Novel metabolites: 1
+  mycobacterium
+    Novel metabolites: 1
+  bordetella
+    Novel metabolites: 1
+  vibrio
+    Novel metabolites: 1
+  helicobacter
+    Novel metabolites: 1
+  legionella
+    Novel metabolites: 1
+
+COMBINATION RESULTS (190 combinations):
+----------------------------------------------------------------------
+TOP 5 CANDIDATES (by vaccine potential):
+
+  1. ecoli + yeast
+     Novel metabolites: 10
+     Best candidate: LPS (Lipopolysaccharide)
+     Vaccine score: 73.5/100
+     Recommendation: high
+
+  2. ecoli + flu_virus
+     Novel metabolites: 1
+     Best candidate: LPS (Lipopolysaccharide)
+     Vaccine score: 73.5/100
+     Recommendation: high
+
+  3. ecoli + bacillus
+     Novel metabolites: 1
+     Best candidate: LPS (Lipopolysaccharide)
+     Vaccine score: 73.5/100
+     Recommendation: high
+
+  4. ecoli + salmonella
+     Novel metabolites: 1
+     Best candidate: LPS (Lipopolysaccharide)
+     Vaccine score: 73.5/100
+     Recommendation: high
+
+  5. ecoli + lactobacillus
+     Novel metabolites: 6
+     Best candidate: LPS (Lipopolysaccharide)
+     Vaccine score: 73.5/100
+     Recommendation: high
+
+======================================================================
+END OF REPORT

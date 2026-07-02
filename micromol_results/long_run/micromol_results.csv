@@ -1,0 +1,11 @@
+Combination,Novel Metabolites Count,Novel Metabolites,Best Vaccine Score,Best Recommendation
+ecoli + yeast,10,"mannan_polysaccharide, ADP, ATP, NADH, acetate, ethanol, CO2, lactate, polysaccharide_lps, glycerol",73.5,high
+ecoli + bacillus,1,polysaccharide_lps,73.5,high
+ecoli + salmonella,1,polysaccharide_lps,73.5,high
+ecoli + lactobacillus,6,"mannan_polysaccharide, ATP, CO2, ethanol, polysaccharide_lps, glycerol",73.5,high
+yeast + bacillus,10,"CO2, ATP, polysaccharide_lps, mannan_polysaccharide, lactate, ethanol, NADH, lipoteichoic_acid, acetate, ADP",73.5,high
+yeast + salmonella,10,"CO2, ATP, polysaccharide_lps, mannan_polysaccharide, lactate, ethanol, NADH, glycerol, acetate, ADP",73.5,high
+bacillus + salmonella,1,polysaccharide_lps,73.5,high
+bacillus + lactobacillus,6,"mannan_polysaccharide, ATP, lipoteichoic_acid, CO2, ethanol, polysaccharide_lps",73.5,high
+salmonella + lactobacillus,6,"CO2, ATP, mannan_polysaccharide, ethanol, glycerol, polysaccharide_lps",73.5,high
+yeast + lactobacillus,5,"mannan_polysaccharide, ATP, CO2, ethanol, glycerol",70.5,high

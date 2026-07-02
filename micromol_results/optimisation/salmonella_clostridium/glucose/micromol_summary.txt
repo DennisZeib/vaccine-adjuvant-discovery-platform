@@ -1,0 +1,25 @@
+======================================================================
+MICROMOL COMBINATION SIMULATOR - SUMMARY REPORT
+======================================================================
+
+Timestamp: 2026-06-05 19:53:57
+
+MONOCULTURE RESULTS (2 runs):
+----------------------------------------------------------------------
+  salmonella
+    Novel metabolites: 1
+  clostridium
+    Novel metabolites: 1
+
+COMBINATION RESULTS (1 combinations):
+----------------------------------------------------------------------
+TOP 5 CANDIDATES (by vaccine potential):
+
+  1. salmonella + clostridium
+     Novel metabolites: 1
+     Best candidate: LPS (Lipopolysaccharide)
+     Vaccine score: 73.5/100
+     Recommendation: high
+
+======================================================================
+END OF REPORT

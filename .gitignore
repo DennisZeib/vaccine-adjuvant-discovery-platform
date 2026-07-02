@@ -1,0 +1,11 @@
+agora_models/
+PRISM/
+AGORA2_annotatedSBML_*/
+*.zip
+models/
+genomes/
+mkdir new_models/
+simulations.db
+__pycache__/
+*.pyc
+.gitignore_backup

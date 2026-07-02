@@ -1,0 +1,35 @@
+Summary report — heuristic candidate scoring
+
+Source files:
+- bgc_analysis/genome/candidates.csv
+- bgc_analysis/genome/candidate_scores.csv
+
+Top-10 candidates (from score rank):
+1. NC_017333.1_1411 — Vaccine_Score: 48.0 — Recommendation: medium — Immunogenicity: 0.300
+2. NC_017333.1_1398 — Vaccine_Score: 48.0 — Recommendation: medium — Immunogenicity: 0.300
+3. NC_017333.1_998  — Vaccine_Score: 48.0 — Recommendation: medium — Immunogenicity: 0.300
+4. NC_017333.1_642  — Vaccine_Score: 48.0 — Recommendation: medium — Immunogenicity: 0.300
+5. NC_017333.1_513  — Vaccine_Score: 48.0 — Recommendation: medium — Immunogenicity: 0.300
+6. NC_017333.1_2061 — Vaccine_Score: 48.0 — Recommendation: medium — Immunogenicity: 0.300
+7. NC_017333.1_2013 — Vaccine_Score: 48.0 — Recommendation: medium — Immunogenicity: 0.300
+8. NC_017333.1_1547 — Vaccine_Score: 48.0 — Recommendation: medium — Immunogenicity: 0.300
+9. NC_017333.1_1049 — Vaccine_Score: 48.0 — Recommendation: medium — Immunogenicity: 0.300
+10.NC_017333.1_576  — Vaccine_Score: 48.0 — Recommendation: medium — Immunogenicity: 0.300
+
+Notes & interpretation:
+- All top entries share an identical scoring profile in this run (Vaccine_Score 48.0, Immunogenicity 0.300, zero adjuvant/toxin similarity). This is expected because placeholder SMILES and limited feature detectors were used in the heuristic pipeline.
+- "medium" recommendation indicates these proteins are plausible candidates for experimental follow-up but require further validation (epitope mapping, toxicity screens, expression tests).
+
+Recommended next steps:
+1. Retrieve the protein sequences for the top candidates from `bgc_analysis/genome/candidates.faa` and run epitope prediction (e.g., NetMHCpan) to identify high-affinity peptides for MHC I/II.
+2. Check genomic context: open `bgc_analysis/genome/genes.gbk` to inspect neighbouring biosynthetic genes (if any). If available, annotate domain architecture (PKS/NRPS modules) with domain tools.
+3. If you want HMMER-based BGC detection later, provide a working `hmmsearch.exe` and a PKS/NRPS HMM file in `bgc_analysis/hmms/` and re-run `run_full_bgc_discovery.ps1`.
+
+Files produced:
+- bgc_analysis/reports/top_candidates.csv  (top 50 candidates)
+- bgc_analysis/reports/summary.txt         (this summary)
+
+If you want, I can:
+- Expand the CSV to include sequence length and a link to `candidates.faa` entries.
+- Run automated epitope prediction for the top 10 candidates (requires internet or local predictors).
+- Prepare a short methods paragraph you can paste into a manuscript describing the heuristic pipeline.

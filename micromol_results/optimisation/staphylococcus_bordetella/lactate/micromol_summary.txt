@@ -1,0 +1,22 @@
+======================================================================
+MICROMOL COMBINATION SIMULATOR - SUMMARY REPORT
+======================================================================
+
+Timestamp: 2026-06-05 19:54:06
+
+MONOCULTURE RESULTS (2 runs):
+----------------------------------------------------------------------
+  staphylococcus
+    Novel metabolites: 0
+  bordetella
+    Novel metabolites: 0
+
+COMBINATION RESULTS (1 combinations):
+----------------------------------------------------------------------
+TOP 5 CANDIDATES (by vaccine potential):
+
+  1. staphylococcus + bordetella
+     Novel metabolites: 0
+
+======================================================================
+END OF REPORT

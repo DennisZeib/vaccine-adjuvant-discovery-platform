@@ -1,0 +1,336 @@
+[
+  {
+    "combination": "ecoli + yeast",
+    "microbe_ids": [
+      "ecoli",
+      "yeast"
+    ],
+    "novel_metabolites": [
+      "CO2",
+      "ethanol",
+      "polysaccharide_lps",
+      "glycerol",
+      "mannan_polysaccharide",
+      "ATP"
+    ],
+    "novel_metabolite_count": 6,
+    "scores": [
+      {
+        "molecule_id": "CO2",
+        "molecule_name": "Carbon dioxide",
+        "immunogenicity_score": 0.3,
+        "novelty_score": 1.0,
+        "toxicity_risk": 0.0,
+        "similarity_to_adjuvants": 0.0,
+        "similarity_to_toxins": 0.0,
+        "overall_vaccine_score": 48.0,
+        "recommendation": "medium",
+        "rationale": [
+          "Adjuvant similarity: 0.000",
+          "Toxin similarity: 0.000",
+          "Immunogenicity: 0.300",
+          "Novelty: 1.000"
+        ]
+      },
+      {
+        "molecule_id": "ethanol",
+        "molecule_name": "Ethanol",
+        "immunogenicity_score": 0.0,
+        "novelty_score": 0.99,
+        "toxicity_risk": 0.0,
+        "similarity_to_adjuvants": 0.01,
+        "similarity_to_toxins": 0.0,
+        "overall_vaccine_score": 29.900000000000002,
+        "recommendation": "low",
+        "rationale": [
+          "-0.7: Common metabolite (not vaccine)",
+          "Adjuvant similarity: 0.010",
+          "Toxin similarity: 0.000",
+          "Immunogenicity: 0.000",
+          "Novelty: 0.990"
+        ]
+      },
+      {
+        "molecule_id": "polysaccharide_lps",
+        "molecule_name": "LPS (Lipopolysaccharide)",
+        "immunogenicity_score": 0.8999999999999999,
+        "novelty_score": 0.15000000000000002,
+        "toxicity_risk": 0.2,
+        "similarity_to_adjuvants": 0.85,
+        "similarity_to_toxins": 0.2,
+        "overall_vaccine_score": 73.5,
+        "recommendation": "high",
+        "rationale": [
+          "+0.6: Strong vaccine adjuvant pattern",
+          "Adjuvant similarity: 0.850",
+          "Toxin similarity: 0.200",
+          "Immunogenicity: 0.900",
+          "Novelty: 0.150"
+        ]
+      },
+      {
+        "molecule_id": "glycerol",
+        "molecule_name": "Glycerol",
+        "immunogenicity_score": 0.0,
+        "novelty_score": 0.98,
+        "toxicity_risk": 0.0,
+        "similarity_to_adjuvants": 0.02,
+        "similarity_to_toxins": 0.0,
+        "overall_vaccine_score": 29.8,
+        "recommendation": "low",
+        "rationale": [
+          "-0.7: Common metabolite (not vaccine)",
+          "Adjuvant similarity: 0.020",
+          "Toxin similarity: 0.000",
+          "Immunogenicity: 0.000",
+          "Novelty: 0.980"
+        ]
+      },
+      {
+        "molecule_id": "mannan_polysaccharide",
+        "molecule_name": "Mannan",
+        "immunogenicity_score": 0.8,
+        "novelty_score": 0.25,
+        "toxicity_risk": 0.0,
+        "similarity_to_adjuvants": 0.75,
+        "similarity_to_toxins": 0.0,
+        "overall_vaccine_score": 70.5,
+        "recommendation": "high",
+        "rationale": [
+          "+0.5: Structural vaccine component",
+          "Adjuvant similarity: 0.750",
+          "Toxin similarity: 0.000",
+          "Immunogenicity: 0.800",
+          "Novelty: 0.250"
+        ]
+      },
+      {
+        "molecule_id": "ATP",
+        "molecule_name": "Adenosine triphosphate",
+        "immunogenicity_score": 0.0,
+        "novelty_score": 0.95,
+        "toxicity_risk": 0.0,
+        "similarity_to_adjuvants": 0.05,
+        "similarity_to_toxins": 0.0,
+        "overall_vaccine_score": 29.5,
+        "recommendation": "low",
+        "rationale": [
+          "-0.7: Common metabolite (not vaccine)",
+          "Adjuvant similarity: 0.050",
+          "Toxin similarity: 0.000",
+          "Immunogenicity: 0.000",
+          "Novelty: 0.950"
+        ]
+      }
+    ],
+    "final_concentrations": {
+      "glucose": 0,
+      "acetate": 0.0,
+      "pyruvate": 0,
+      "lactate": 0.0,
+      "alanine": 0.0,
+      "glutamate": 0,
+      "alpha_ketoglutarate": 0.0,
+      "ethanol": 0.6961446112801911,
+      "glycerol": 0.21545341034212653,
+      "ATP": 0.5272271688372036,
+      "NADH": 0,
+      "ADP": 0.0,
+      "CO2": 1.2233717801173938,
+      "polysaccharide_lps": 0.172362728273701,
+      "mannan_polysaccharide": 0.1298965488439486,
+      "host_proteins": 0.0,
+      "host_nucleotides": 0.0,
+      "viral_rna": 0.0,
+      "viral_capsid": 0.0,
+      "viral_spike_protein": 0.0,
+      "viral_particle_with_spike": 0.0
+    },
+    "success": true
+  },
+  {
+    "combination": "ecoli + flu_virus",
+    "microbe_ids": [
+      "ecoli",
+      "flu_virus"
+    ],
+    "novel_metabolites": [
+      "polysaccharide_lps"
+    ],
+    "novel_metabolite_count": 1,
+    "scores": [
+      {
+        "molecule_id": "polysaccharide_lps",
+        "molecule_name": "LPS (Lipopolysaccharide)",
+        "immunogenicity_score": 0.8999999999999999,
+        "novelty_score": 0.15000000000000002,
+        "toxicity_risk": 0.2,
+        "similarity_to_adjuvants": 0.85,
+        "similarity_to_toxins": 0.2,
+        "overall_vaccine_score": 73.5,
+        "recommendation": "high",
+        "rationale": [
+          "+0.6: Strong vaccine adjuvant pattern",
+          "Adjuvant similarity: 0.850",
+          "Toxin similarity: 0.200",
+          "Immunogenicity: 0.900",
+          "Novelty: 0.150"
+        ]
+      }
+    ],
+    "final_concentrations": {
+      "glucose": 0,
+      "acetate": 0.0,
+      "pyruvate": 0,
+      "lactate": 0.0,
+      "alanine": 0.0,
+      "glutamate": 0,
+      "alpha_ketoglutarate": 0.0,
+      "ethanol": 0.0,
+      "glycerol": 0.0,
+      "ATP": 0,
+      "NADH": 0,
+      "ADP": 0.0,
+      "CO2": 0.0,
+      "polysaccharide_lps": 0.953438825447803,
+      "mannan_polysaccharide": 0.0,
+      "host_proteins": 0,
+      "host_nucleotides": 0,
+      "viral_rna": 0.0,
+      "viral_capsid": 0.0,
+      "viral_spike_protein": 0,
+      "viral_particle_with_spike": 0.0
+    },
+    "success": true
+  },
+  {
+    "combination": "yeast + flu_virus",
+    "microbe_ids": [
+      "yeast",
+      "flu_virus"
+    ],
+    "novel_metabolites": [
+      "CO2",
+      "ethanol",
+      "glycerol",
+      "mannan_polysaccharide",
+      "ATP"
+    ],
+    "novel_metabolite_count": 5,
+    "scores": [
+      {
+        "molecule_id": "CO2",
+        "molecule_name": "Carbon dioxide",
+        "immunogenicity_score": 0.3,
+        "novelty_score": 1.0,
+        "toxicity_risk": 0.0,
+        "similarity_to_adjuvants": 0.0,
+        "similarity_to_toxins": 0.0,
+        "overall_vaccine_score": 48.0,
+        "recommendation": "medium",
+        "rationale": [
+          "Adjuvant similarity: 0.000",
+          "Toxin similarity: 0.000",
+          "Immunogenicity: 0.300",
+          "Novelty: 1.000"
+        ]
+      },
+      {
+        "molecule_id": "ethanol",
+        "molecule_name": "Ethanol",
+        "immunogenicity_score": 0.0,
+        "novelty_score": 0.99,
+        "toxicity_risk": 0.0,
+        "similarity_to_adjuvants": 0.01,
+        "similarity_to_toxins": 0.0,
+        "overall_vaccine_score": 29.900000000000002,
+        "recommendation": "low",
+        "rationale": [
+          "-0.7: Common metabolite (not vaccine)",
+          "Adjuvant similarity: 0.010",
+          "Toxin similarity: 0.000",
+          "Immunogenicity: 0.000",
+          "Novelty: 0.990"
+        ]
+      },
+      {
+        "molecule_id": "glycerol",
+        "molecule_name": "Glycerol",
+        "immunogenicity_score": 0.0,
+        "novelty_score": 0.98,
+        "toxicity_risk": 0.0,
+        "similarity_to_adjuvants": 0.02,
+        "similarity_to_toxins": 0.0,
+        "overall_vaccine_score": 29.8,
+        "recommendation": "low",
+        "rationale": [
+          "-0.7: Common metabolite (not vaccine)",
+          "Adjuvant similarity: 0.020",
+          "Toxin similarity: 0.000",
+          "Immunogenicity: 0.000",
+          "Novelty: 0.980"
+        ]
+      },
+      {
+        "molecule_id": "mannan_polysaccharide",
+        "molecule_name": "Mannan",
+        "immunogenicity_score": 0.8,
+        "novelty_score": 0.25,
+        "toxicity_risk": 0.0,
+        "similarity_to_adjuvants": 0.75,
+        "similarity_to_toxins": 0.0,
+        "overall_vaccine_score": 70.5,
+        "recommendation": "high",
+        "rationale": [
+          "+0.5: Structural vaccine component",
+          "Adjuvant similarity: 0.750",
+          "Toxin similarity: 0.000",
+          "Immunogenicity: 0.800",
+          "Novelty: 0.250"
+        ]
+      },
+      {
+        "molecule_id": "ATP",
+        "molecule_name": "Adenosine triphosphate",
+        "immunogenicity_score": 0.0,
+        "novelty_score": 0.95,
+        "toxicity_risk": 0.0,
+        "similarity_to_adjuvants": 0.05,
+        "similarity_to_toxins": 0.0,
+        "overall_vaccine_score": 29.5,
+        "recommendation": "low",
+        "rationale": [
+          "-0.7: Common metabolite (not vaccine)",
+          "Adjuvant similarity: 0.050",
+          "Toxin similarity: 0.000",
+          "Immunogenicity: 0.000",
+          "Novelty: 0.950"
+        ]
+      }
+    ],
+    "final_concentrations": {
+      "glucose": 0,
+      "acetate": 0.0,
+      "pyruvate": 0.0,
+      "lactate": 0.0,
+      "alanine": 0.0,
+      "glutamate": 0.0,
+      "alpha_ketoglutarate": 0.0,
+      "ethanol": 0.6961446112801911,
+      "glycerol": 0.21545341034212653,
+      "ATP": 0.5272271688372036,
+      "NADH": 0.0,
+      "ADP": 0.0,
+      "CO2": 1.2233717801173938,
+      "polysaccharide_lps": 0.0,
+      "mannan_polysaccharide": 0.1298965488439486,
+      "host_proteins": 0,
+      "host_nucleotides": 0,
+      "viral_rna": 0.0,
+      "viral_capsid": 0.0,
+      "viral_spike_protein": 0,
+      "viral_particle_with_spike": 0.0
+    },
+    "success": true
+  }
+]

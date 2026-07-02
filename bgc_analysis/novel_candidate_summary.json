@@ -1,0 +1,7 @@
+{
+  "molecule_id": "novel_pks_product",
+  "smiles": "CCCC(=O)OCC1OC(=O)CCCCCC1",
+  "toxicity_risk": 0.0,
+  "immunogenicity_score": 0.3,
+  "overall_vaccine_score": 48.0
+}
