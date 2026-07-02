@@ -1285,6 +1285,8 @@ def init_db() -> None:
             avg_score REAL,
             toxicity REAL,
             recommendation TEXT,
+            git_commit TEXT,
+            sbml_checksum TEXT,
             time_steps_json TEXT,
             concentration_history_json TEXT,
             biomass_history_json TEXT
@@ -1302,6 +1304,7 @@ def init_db() -> None:
         "lps_score": "REAL", "mannan_score": "REAL", "flagellin_score": "REAL",
         "ethanol": "REAL", "lactate": "REAL", "acetate": "REAL",
         "avg_score": "REAL", "toxicity": "REAL", "recommendation": "TEXT",
+        "git_commit": "TEXT", "sbml_checksum": "TEXT",
         "time_steps_json": "TEXT", "concentration_history_json": "TEXT",
         "biomass_history_json": "TEXT",
     }
@@ -1348,6 +1351,40 @@ def save_simulation(
     conc_hist_json = json.dumps(sim_result.get("concentration_history", {})) if sim_result else "{}"
     bio_hist_json = json.dumps(sim_result.get("biomass_history", {})) if sim_result else "{}"
 
+    # provenance: git commit short hash (if available) and SBML checksum for involved models
+    def _get_git_commit_short():
+        try:
+            out = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL)
+            return out.decode().strip()
+        except Exception:
+            return None
+
+    def _compute_sbml_checksum(a_name: str, b_name: str) -> Optional[str]:
+        sbml_dir = Path("agora_models")
+        if not sbml_dir.exists():
+            return None
+        files = list(sbml_dir.glob("*.xml")) + list(sbml_dir.glob("*.sbml"))
+        matched = []
+        for nm in (a_name, b_name):
+            if not nm:
+                continue
+            for f in files:
+                if nm.lower() in f.stem.lower():
+                    matched.append(f)
+                    break
+        if not matched:
+            return None
+        h = hashlib.sha256()
+        for f in matched:
+            try:
+                h.update(f.read_bytes())
+            except Exception:
+                continue
+        return h.hexdigest()
+
+    git_commit = _get_git_commit_short()
+    sbml_checksum = _compute_sbml_checksum(microbe_a, microbe_b)
+
     c.execute('''
         INSERT INTO simulations (
             timestamp, microbe_a, microbe_b, glucose, duration,
@@ -1357,7 +1394,7 @@ def save_simulation(
             ethanol, lactate, acetate,
             avg_score, toxicity, recommendation,
             time_steps_json, concentration_history_json, biomass_history_json
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         datetime.now().isoformat(timespec="seconds"),
         microbe_a, microbe_b, glucose, duration,
@@ -1372,6 +1409,7 @@ def save_simulation(
         final.get("lactate", 0.0),
         final.get("acetate", 0.0),
         avg_score, toxicity, recommendation,
+        git_commit, sbml_checksum,
         time_steps_json, conc_hist_json, bio_hist_json,
     ))
     conn.commit()
@@ -2541,16 +2579,16 @@ if page == "Προσομοίωση":
                     label, sim_result,
                 )
             st.markdown(
-                f"<span style='font-family:{FONT_MONO}; font-size:0.78rem; color:#5C6B67;'>"
-                f"Ολοκληρώθηκε σε {elapsed*1000:.0f} ms &middot; {len(sim_result['time_steps'])} χρονικά σημεία"
-                f"</span>", unsafe_allow_html=True
+                f'<span style="font-family:{FONT_MONO}; font-size:0.78rem; color:#5C6B67;">'
+                f'Ολοκληρώθηκε σε {elapsed*1000:.0f} ms &middot; {len(sim_result["time_steps"])} χρονικά σημεία'
+                f'</span>', unsafe_allow_html=True
             )
 
             col1, col2 = st.columns([2, 1])
             with col1:
-                st.markdown(f"<div class='eyebrow' style='font-family:{FONT_MONO}; font-size:0.7rem; "
-                            f"letter-spacing:0.1em; color:{COLOR_TARGET}; text-transform:uppercase; "
-                            f"margin-bottom:0.3rem;'>Κατάλογος στόχων-αντιγόνων (PAMPs)</div>",
+                st.markdown(f'<div class="eyebrow" style="font-family:{FONT_MONO}; font-size:0.7rem; '
+                            f'letter-spacing:0.1em; color:{COLOR_TARGET}; text-transform:uppercase; '
+                            f'margin-bottom:0.3rem;">Κατάλογος στόχων-αντιγόνων (PAMPs)</div>',
                             unsafe_allow_html=True)
 
                 # -- Signature component: assay cards για τους 3 στόχους ---------
@@ -2570,9 +2608,9 @@ if page == "Προσομοίωση":
                         )
                         st.caption(f"Βαθμολογία: **{sc.overall_vaccine_score:.1f}**/100")
 
-                st.markdown(f"<div class='eyebrow' style='font-family:{FONT_MONO}; font-size:0.7rem; "
-                            f"letter-spacing:0.1em; color:{COLOR_BYPRODUCT}; text-transform:uppercase; "
-                            f"margin:0.9rem 0 0.3rem 0;'>Παραπροϊόντα ζύμωσης</div>",
+                st.markdown(f'<div class="eyebrow" style="font-family:{FONT_MONO}; font-size:0.7rem; '
+                            f'letter-spacing:0.1em; color:{COLOR_BYPRODUCT}; text-transform:uppercase; '
+                            f'margin:0.9rem 0 0.3rem 0;">Παραπροϊόντα ζύμωσης</div>',
                             unsafe_allow_html=True)
                 bp_cols = st.columns(3)
                 for idx, met in enumerate(BYPRODUCT_METABOLITES):
@@ -2886,9 +2924,9 @@ elif page == "Βελτιστοποίηση":
         with col2:
             best = pareto_df.loc[pareto_df["combined"].idxmax()] if not pareto_df.empty else None
             if best is not None:
-                st.markdown(f"<div style='font-family:{FONT_MONO}; font-size:0.7rem; "
-                            f"letter-spacing:0.1em; color:{COLOR_TARGET}; text-transform:uppercase; "
-                            f"margin-bottom:0.3rem;'>Προτεινόμενο σημείο λειτουργίας</div>",
+                st.markdown(f'<div style="font-family:{FONT_MONO}; font-size:0.7rem; '
+                            f'letter-spacing:0.1em; color:{COLOR_TARGET}; text-transform:uppercase; '
+                            f'margin-bottom:0.3rem;">Προτεινόμενο σημείο λειτουργίας</div>',
                             unsafe_allow_html=True)
                 render_assay_card(
                     catalog_no="OPT·01", name=f"{microbe_a[:18]} + {microbe_b[:18]}",
@@ -3128,13 +3166,13 @@ elif page == "Σύγκριση":
             with ccol_mid:
                 delta_score = row_left["avg_score"] - row_right["avg_score"]
                 delta_tox = row_left["toxicity"] - row_right["toxicity"]
-                st.markdown(f"<div style='text-align:center; font-family:{FONT_MONO}; padding-top:2.2rem;'>"
-                            f"<div style='font-size:0.7rem; color:#8A968F;'>Δ ΒΑΘΜΟΛΟΓΙΑ</div>"
-                            f"<div style='font-size:1.3rem; color:{COLOR_TARGET if delta_score >= 0 else COLOR_BYPRODUCT};'>"
-                            f"{delta_score:+.1f}</div>"
-                            f"<div style='font-size:0.7rem; color:#8A968F; margin-top:0.6rem;'>Δ ΤΟΞΙΚΟΤΗΤΑ</div>"
-                            f"<div style='font-size:1.3rem; color:{COLOR_BYPRODUCT if delta_tox >= 0 else COLOR_TARGET};'>"
-                            f"{delta_tox:+.1f}</div></div>", unsafe_allow_html=True)
+                st.markdown(f'<div style="text-align:center; font-family:{FONT_MONO}; padding-top:2.2rem;">'
+                            f'<div style="font-size:0.7rem; color:#8A968F;">Δ ΒΑΘΜΟΛΟΓΙΑ</div>'
+                            f'<div style="font-size:1.3rem; color:{COLOR_TARGET if delta_score >= 0 else COLOR_BYPRODUCT};">'
+                            f'{delta_score:+.1f}</div>'
+                            f'<div style="font-size:0.7rem; color:#8A968F; margin-top:0.6rem;">Δ ΤΟΞΙΚΟΤΗΤΑ</div>'
+                            f'<div style="font-size:1.3rem; color:{COLOR_BYPRODUCT if delta_tox >= 0 else COLOR_TARGET};">'
+                            f'{delta_tox:+.1f}</div></div>', unsafe_allow_html=True)
             with ccol2:
                 st.markdown(f"**{_h2h_label(row_right)}**")
                 st.caption(f"Γλυκόζη {row_right['glucose']:.0f} mM · Διάρκεια {row_right['duration']:.0f}h")
