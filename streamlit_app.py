@@ -64,13 +64,14 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import streamlit as st
+import itertools
 
 sys.setrecursionlimit(1000000)   # <-- ΠΡΟΣΘΗΚΗ 2
 
 try:
     from cobra.io import read_sbml_model
     from cobra.io.sbml import validate_sbml_model
-    from cobra import Model
+    from cobra import Model, Reaction, Metabolite
     _HAS_COBRA = True
 except ImportError:
     _HAS_COBRA = False
@@ -78,6 +79,7 @@ except ImportError:
 
 try:
     from scipy.integrate import odeint
+    from scipy.optimize import curve_fit
     _HAS_SCIPY = True
 except ImportError:
     _HAS_SCIPY = False
@@ -1214,7 +1216,36 @@ def get_scorer():
 def get_simulator() -> CombinationSimulator:
     """Ο προσομοιωτής είναι ελαφρύς (stateless πέραν των παραπάνω dict) —
     τον δημιουργούμε φρέσκο κάθε φορά χρησιμοποιώντας τα cached registries."""
-    return CombinationSimulator(get_microbes(), get_metabolite_registry())
+    microbes = get_microbes()
+
+    # Apply any user-saved calibration parameters to the microbe profiles
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        for name, profile in microbes.items():
+            c.execute("SELECT params_json FROM calibrations WHERE microbe = ? ORDER BY id DESC LIMIT 1", (name,))
+            row = c.fetchone()
+            if row and row[0]:
+                try:
+                    params = json.loads(row[0])
+                    if isinstance(params, dict):
+                        if params.get("model") == "monod":
+                            if "mu_max" in params:
+                                profile.mu_max = float(params["mu_max"])
+                            if "Ks" in params:
+                                profile.Ks = float(params["Ks"])
+                        elif params.get("model") == "exponential":
+                            if "mu" in params:
+                                profile.mu_max = float(params["mu"])  # use mu as mu_max proxy
+                except Exception:
+                    # ignore faulty calibration entries
+                    pass
+        conn.close()
+    except Exception:
+        # DB not available or error reading calibrations; proceed with defaults
+        pass
+
+    return CombinationSimulator(microbes, get_metabolite_registry())
 
 
 # ============================================================================
@@ -1254,6 +1285,8 @@ def init_db() -> None:
             avg_score REAL,
             toxicity REAL,
             recommendation TEXT,
+            git_commit TEXT,
+            sbml_checksum TEXT,
             time_steps_json TEXT,
             concentration_history_json TEXT,
             biomass_history_json TEXT
@@ -1271,6 +1304,7 @@ def init_db() -> None:
         "lps_score": "REAL", "mannan_score": "REAL", "flagellin_score": "REAL",
         "ethanol": "REAL", "lactate": "REAL", "acetate": "REAL",
         "avg_score": "REAL", "toxicity": "REAL", "recommendation": "TEXT",
+        "git_commit": "TEXT", "sbml_checksum": "TEXT",
         "time_steps_json": "TEXT", "concentration_history_json": "TEXT",
         "biomass_history_json": "TEXT",
     }
@@ -1279,6 +1313,22 @@ def init_db() -> None:
     for col_name, col_type in required_columns.items():
         if col_name not in existing_columns:
             c.execute(f"ALTER TABLE simulations ADD COLUMN {col_name} {col_type}")
+    conn.commit()
+    conn.close()
+
+    # -- Table for parameter calibrations (per-microbe)
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS calibrations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            microbe TEXT NOT NULL,
+            model TEXT NOT NULL,
+            params_json TEXT NOT NULL,
+            notes TEXT
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -1301,6 +1351,40 @@ def save_simulation(
     conc_hist_json = json.dumps(sim_result.get("concentration_history", {})) if sim_result else "{}"
     bio_hist_json = json.dumps(sim_result.get("biomass_history", {})) if sim_result else "{}"
 
+    # provenance: git commit short hash (if available) and SBML checksum for involved models
+    def _get_git_commit_short():
+        try:
+            out = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL)
+            return out.decode().strip()
+        except Exception:
+            return None
+
+    def _compute_sbml_checksum(a_name: str, b_name: str) -> Optional[str]:
+        sbml_dir = Path("agora_models")
+        if not sbml_dir.exists():
+            return None
+        files = list(sbml_dir.glob("*.xml")) + list(sbml_dir.glob("*.sbml"))
+        matched = []
+        for nm in (a_name, b_name):
+            if not nm:
+                continue
+            for f in files:
+                if nm.lower() in f.stem.lower():
+                    matched.append(f)
+                    break
+        if not matched:
+            return None
+        h = hashlib.sha256()
+        for f in matched:
+            try:
+                h.update(f.read_bytes())
+            except Exception:
+                continue
+        return h.hexdigest()
+
+    git_commit = _get_git_commit_short()
+    sbml_checksum = _compute_sbml_checksum(microbe_a, microbe_b)
+
     c.execute('''
         INSERT INTO simulations (
             timestamp, microbe_a, microbe_b, glucose, duration,
@@ -1310,7 +1394,7 @@ def save_simulation(
             ethanol, lactate, acetate,
             avg_score, toxicity, recommendation,
             time_steps_json, concentration_history_json, biomass_history_json
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         datetime.now().isoformat(timespec="seconds"),
         microbe_a, microbe_b, glucose, duration,
@@ -1325,6 +1409,7 @@ def save_simulation(
         final.get("lactate", 0.0),
         final.get("acetate", 0.0),
         avg_score, toxicity, recommendation,
+        git_commit, sbml_checksum,
         time_steps_json, conc_hist_json, bio_hist_json,
     ))
     conn.commit()
@@ -1358,6 +1443,29 @@ def load_row_history_json(row_id: int) -> Optional[dict]:
     conn.close()
     if not row:
         return None
+
+
+    def save_calibration(microbe: str, model: str, params: dict, notes: str = "") -> None:
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        c.execute('''
+            INSERT INTO calibrations (timestamp, microbe, model, params_json, notes)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (
+            datetime.now().isoformat(timespec="seconds"),
+            microbe, model, json.dumps(params), notes
+        ))
+        conn.commit()
+        conn.close()
+
+
+    def load_calibrations(limit: int = 500) -> pd.DataFrame:
+        conn = sqlite3.connect(DB_FILE)
+        df = pd.read_sql_query(f"SELECT id, timestamp, microbe, model, params_json, notes FROM calibrations ORDER BY id DESC LIMIT {int(limit)}", conn)
+        conn.close()
+        if not df.empty:
+            df["params"] = df["params_json"].apply(lambda s: json.loads(s) if s else {})
+        return df
     time_steps, conc_hist, bio_hist, microbe_a, microbe_b = row
     return {
         "time_steps": json.loads(time_steps) if time_steps else [],
@@ -2007,6 +2115,8 @@ with st.sidebar:
 
 PAGES = [
     "Προσομοίωση",
+    "Advanced Screening",
+    "Calibration",
     "Batch Analysis",
     "Monte Carlo",
     "Βελτιστοποίηση",
@@ -2015,6 +2125,7 @@ PAGES = [
     "Σύγκριση",
     "Δίκτυο Μεταβολισμού",
     "⚡ FBA (SBML)",   
+    "dFBA Prototype",
     "Σχετικά",
 ]
 page = st.sidebar.radio("Πλοήγηση", PAGES, label_visibility="collapsed")
@@ -2023,6 +2134,401 @@ page = st.sidebar.radio("Πλοήγηση", PAGES, label_visibility="collapsed")
 _microbes = get_microbes()
 _metabolite_registry = get_metabolite_registry()
 _microbe_names = list(_microbes.keys())
+
+
+def show_advanced_screening():
+    """Advanced Screening: pairwise co-culture screening for selected microbes."""
+    render_masthead(
+        "Πρωτόκολλο Advanced Screening &middot; Pairwise screening",
+        "Advanced Screening",
+        "Εκτέλεσε προσομοιώσεις ζευγών μικροβίων και διάταξε τα αποτελέσματα κατά μέσο βαθμό εμβολιακής δράσης."
+    )
+
+    with st.sidebar:
+        st.header("⚙️ Advanced Screening")
+        selected = st.multiselect("Επίλεξε μικρόβια", _microbe_names,
+                                  default=_microbe_names[:3] if len(_microbe_names) >= 3 else _microbe_names,
+                                  help="Επίλεξε μία λίστα μικροβίων (έως όσα θέλεις)", key="adv_selected")
+        glucose = st.slider("🍬 Γλυκόζη (mM)", 0, 200, 100, step=5, key="adv_glucose")
+        duration = st.slider("⏱️ Διάρκεια (ώρες)", 6, 96, 48, step=6, key="adv_duration")
+        ratio_a = st.slider("🔬 Αναλογία A (τιμή)", 1, 200, 10, step=1, key="adv_ratio_a")
+        ratio_b = st.slider("🔬 Αναλογία B (τιμή)", 1, 200, 1, step=1, key="adv_ratio_b")
+        substrate = st.selectbox("Υπόστρωμα", ["glucose"], index=0, key="adv_substrate")
+        vmax_factor = st.slider("Vmax factor", 0.1, 5.0, 1.0, step=0.1, key="adv_vmax")
+        dt = st.number_input("Δt (h)", value=0.25, step=0.05, format="%.3f", key="adv_dt")
+        run = st.button("🚀 Run Screening", key="adv_run")
+
+    st.markdown("### Selected microbes")
+    st.write(selected)
+
+    if not run:
+        st.info("Επίλεξε τα μικρόβια και πάτησε **Run Screening** για να ξεκινήσει η ανάλυση.")
+        return
+
+    if len(selected) < 2:
+        st.warning("Πρέπει να επιλέξεις τουλάχιστον δύο μικρόβια για να δημιουργηθούν ζεύγη.")
+        return
+
+    pairs = list(itertools.combinations(selected, 2))
+    results = []
+
+    @st.cache_data(show_spinner=False)
+    def _run_pair(a, b, glucose, duration, ratio_a, ratio_b, substrate, vmax_factor, dt):
+        final, meta = run_simulation(a, b, glucose, duration, ratio_a, ratio_b, substrate, vmax_factor, dt)
+        scores_dict, avg_score, toxicity = calculate_scores(final)
+        return avg_score, toxicity, final, meta
+
+    with st.spinner(f"Running {len(pairs)} pairwise simulations..."):
+        progress = st.progress(0)
+        for i, (a, b) in enumerate(pairs, start=1):
+            avg_score, toxicity, final, meta = _run_pair(a, b, glucose, duration, ratio_a, ratio_b, substrate, vmax_factor, dt)
+            results.append({
+                "Pair": f"{a} | {b}",
+                "Microbe_A": a,
+                "Microbe_B": b,
+                "Avg_Score": float(avg_score),
+                "Toxicity": float(toxicity),
+            })
+            progress.progress(i / len(pairs))
+
+    df = pd.DataFrame(results).sort_values("Avg_Score", ascending=False).reset_index(drop=True)
+
+    st.subheader("Results")
+    st.dataframe(df)
+
+    # Heatmap
+    microbes = selected
+    heat = pd.DataFrame(np.nan, index=microbes, columns=microbes)
+    for r in results:
+        a = r["Microbe_A"]
+        b = r["Microbe_B"]
+        heat.at[a, b] = r["Avg_Score"]
+        heat.at[b, a] = r["Avg_Score"]
+
+    fig, ax = plt.subplots(figsize=(6, max(4, len(microbes) * 0.6)))
+    sns.heatmap(heat.astype(float), annot=True, fmt=".3f", cmap="viridis", ax=ax, cbar_kws={"label": "Avg Score"}, linewidths=0.5)
+    ax.set_title("Pairwise Avg Vaccine Score")
+    st.pyplot(fig)
+
+    # Top-5 bar chart
+    top5 = df.head(5)
+    fig2, ax2 = plt.subplots(figsize=(7, 3 + top5.shape[0] * 0.4))
+    sns.barplot(x="Avg_Score", y="Pair", data=top5, palette="mako", ax=ax2)
+    ax2.set_xlabel("Avg Score")
+    ax2.set_ylabel("")
+    st.pyplot(fig2)
+
+    # Best and safest pairs
+    if not df.empty:
+        best = df.loc[df["Avg_Score"].idxmax()]
+        safest = df.loc[df["Toxicity"].idxmin()]
+        st.markdown(f"**Best pair:** {best['Pair']} — Avg Score: {best['Avg_Score']:.4f}")
+        st.markdown(f"**Safest pair:** {safest['Pair']} — Toxicity: {safest['Toxicity']:.4f}")
+
+    # Download
+    csv = df.to_csv(index=False).encode("utf-8")
+    st.download_button("Download CSV", data=csv, file_name="advanced_screening_results.csv", mime="text/csv", use_container_width=True)
+# placeholder for calibration page
+def show_calibration():
+    """Calibration UI: upload growth curves and fit ODE parameters."""
+    render_masthead(
+        "Calibration &middot; Parameter fitting",
+        "Calibration",
+        "Φόρτωσε πειραματικές χρονοσειρές (OD / υπόστρωμα) και κάνε fitting παραμέτρων του μοντέλου Monod ή εκθετικού."
+    )
+
+    with st.sidebar:
+        st.header("⚙️ Calibration")
+        microbe = st.selectbox("Επίλεξε μικρόβιο", _microbe_names, index=0, key="cal_microbe")
+        model_choice = st.selectbox("Μοντέλο", ["Exponential", "Monod"], index=0, key="cal_model")
+        uploaded = st.file_uploader("Upload CSV (time, od[, substrate])", type=["csv"], key="cal_upload")
+        y_col = st.text_input("OD column name", value="od", key="cal_ycol")
+        time_col = st.text_input("Time column name", value="time", key="cal_tcol")
+        substrate_col = st.text_input("Substrate column name (for Monod)", value="substrate", key="cal_scol")
+        fit_btn = st.button("🔬 Fit Parameters", key="cal_fit")
+
+    if uploaded is None:
+        st.info("Φόρτωσε ένα αρχείο CSV με τις χρονοσειρές για να ξεκινήσεις το fitting.")
+        return
+
+    df = pd.read_csv(uploaded)
+    if time_col not in df.columns or y_col not in df.columns:
+        st.error(f"Το αρχείο πρέπει να περιέχει τις στήλες '{time_col}' και '{y_col}'. Βρέθηκαν: {list(df.columns)}")
+        return
+
+    t = df[time_col].to_numpy(dtype=float)
+    y = df[y_col].to_numpy(dtype=float)
+
+    if model_choice == "Exponential":
+        def exp_model(t, X0, mu):
+            return X0 * np.exp(mu * t)
+
+        p0 = [max(y[0], 1e-6), 0.5]
+        try:
+            popt, pcov = curve_fit(exp_model, t, y, p0=p0, maxfev=20000)
+            X0_hat, mu_hat = popt
+            y_pred = exp_model(t, *popt)
+            st.success(f"Fitted exponential: X0={X0_hat:.4g}, mu={mu_hat:.4g}  (1/h)")
+            st.line_chart(pd.DataFrame({"observed": y, "fitted": y_pred}, index=t))
+            params = {"model": "exponential", "X0": float(X0_hat), "mu": float(mu_hat)}
+            save_calibration(microbe, "exponential", params)
+            st.download_button("Download params (JSON)", data=json.dumps(params, indent=2), file_name=f"calibration_{microbe}_exp.json", mime="application/json", use_container_width=True)
+        except Exception as e:
+            st.error(f"Fitting failed: {e}")
+
+    elif model_choice == "Monod":
+        if substrate_col not in df.columns:
+            st.error(f"Monod fitting requires substrate column '{substrate_col}' in the CSV.")
+            return
+        S_obs = df[substrate_col].to_numpy(dtype=float)
+
+        def monod_simulate(t, mu_max, Ks):
+            X0 = max(y[0], 1e-6)
+            S0 = max(S_obs[0], 1e-6)
+            Y = 0.5
+
+            def rhs(state, tt, mu_max, Ks, Y):
+                X, S = state
+                mu = mu_max * S / (Ks + S)
+                dX = mu * X
+                dS = - (1.0 / Y) * mu * X
+                return [dX, dS]
+
+            sol = odeint(rhs, [X0, S0], t, args=(mu_max, Ks, Y))
+            return sol[:, 0]
+
+        p0 = [0.8, 0.1]
+        try:
+            popt, pcov = curve_fit(lambda tt, mu_max, Ks: monod_simulate(tt, mu_max, Ks), t, y, p0=p0, bounds=(0, np.inf), maxfev=20000)
+            mu_max_hat, Ks_hat = popt
+            y_pred = monod_simulate(t, *popt)
+            st.success(f"Fitted Monod: mu_max={mu_max_hat:.4g}, Ks={Ks_hat:.4g}")
+            st.line_chart(pd.DataFrame({"observed": y, "fitted": y_pred}, index=t))
+            params = {"model": "monod", "mu_max": float(mu_max_hat), "Ks": float(Ks_hat)}
+            save_calibration(microbe, "monod", params)
+            st.download_button("Download params (JSON)", data=json.dumps(params, indent=2), file_name=f"calibration_{microbe}_monod.json", mime="application/json", use_container_width=True)
+        except Exception as e:
+            st.error(f"Monod fitting failed: {e}")
+
+
+def build_minimal_fba_model(substrate_name: str = "glucose") -> Model:
+    """Constructs a minimal toy COBRA model with an exchange for substrate and a biomass reaction.
+
+    This is intentionally simplistic — a prototype to demonstrate linking fluxes
+    back into the ODE simulator.
+    """
+    model = Model(f"toy_{substrate_name}")
+    s = Metabolite(f"{substrate_name}_c")
+    # Exchange reaction for substrate
+    ex = Reaction(f"EX_{substrate_name}")
+    ex.add_metabolites({s: -1.0})
+    ex.lower_bound = -1000.0
+    ex.upper_bound = 1000.0
+    # Biomass reaction consumes substrate -> biomass
+    bio = Reaction("BIOMASS")
+    bio.add_metabolites({s: -1.0})
+    bio.lower_bound = 0.0
+    bio.upper_bound = 1000.0
+    model.add_reactions([ex, bio])
+    model.objective = "BIOMASS"
+    return model
+
+
+def show_dfba_prototype():
+    """Prototype dynamic FBA: couple FBA uptake bounds (MM) to ODE updates with mass-balance."""
+    render_masthead("dFBA Prototype", "Dynamic FBA Prototype",
+                    "Πειραματική σύνδεση FBA ↔ ODE: uptake bound = -Vmax*S/(Km+S); mass-balance σε mmol↔mM.")
+
+    with st.sidebar:
+        st.header("⚙️ dFBA Prototype")
+        microbe_a = st.selectbox("1ο μικρόβιο", _microbe_names, index=0, key="dfba_a")
+        microbe_b = st.selectbox("2ο μικρόβιο", _microbe_names, index=1 if len(_microbe_names) > 1 else 0, key="dfba_b")
+        glucose = st.number_input("Initial glucose (mM)", min_value=0.0, value=100.0, step=1.0, key="dfba_glucose")
+        duration = st.number_input("Duration (h)", min_value=1.0, value=24.0, step=1.0, key="dfba_duration")
+        dt = st.number_input("Δt (h)", value=0.5, step=0.1, format="%.3f", key="dfba_dt")
+        VOLUME_L = st.number_input("Volume (L)", value=1.0, min_value=1e-6, step=0.1, key="dfba_vol")
+        biomass_gdw_per_unit = st.number_input("Biomass gDW per biomass-unit", value=0.001, step=0.0001, format="%.6f", key="dfba_bconv")
+        st.markdown("---")
+        st.markdown("**MM uptake params (per microbe)**")
+        Vmax_a = st.number_input(f"Vmax {microbe_a} (mmol/gDW/h)", value=10.0, step=0.1, key="dfba_vmax_a")
+        Km_a = st.number_input(f"Km {microbe_a} (mM)", value=0.5, step=0.1, key="dfba_km_a")
+        Vmax_b = st.number_input(f"Vmax {microbe_b} (mmol/gDW/h)", value=10.0, step=0.1, key="dfba_vmax_b")
+        Km_b = st.number_input(f"Km {microbe_b} (mM)", value=0.5, step=0.1, key="dfba_km_b")
+        run = st.button("🚀 Run dFBA", key="dfba_run")
+        run_tests = st.button("Run dFBA sanity tests", key="dfba_tests")
+
+    if not _HAS_COBRA:
+        st.error("COBRApy δεν είναι διαθέσιμο — εγκατέστησέ το με `pip install cobra` για να τρέξεις dFBA prototype.")
+        return
+
+    profiles = get_microbes()
+    pa = profiles[microbe_a]
+    pb = profiles[microbe_b]
+
+    def _run_dfba_simulation(S0_mM: float, duration_h: float, dt_h: float,
+                             Vmax_a: float, Km_a: float, Vmax_b: float, Km_b: float,
+                             biomass_conv: float, volume_l: float):
+        ma = build_minimal_fba_model("glucose")
+        mb = build_minimal_fba_model("glucose")
+
+        # trackers
+        times = np.arange(0.0, duration_h + dt_h / 2.0, dt_h)
+        S_hist = []
+        Xa_gdw_hist = []
+        Xb_gdw_hist = []
+        mu_a_hist = []
+        mu_b_hist = []
+        uptake_a_hist = []
+        uptake_b_hist = []
+
+        # initial biomass in gDW
+        Xa_gdw = 0.02 * biomass_conv
+        Xb_gdw = 0.02 * biomass_conv
+        S = float(S0_mM)
+
+        for t in times:
+            # compute MM-limited per-gDW uptake bounds (mmol/gDW/h)
+            v_a_mm = Vmax_a * S / (Km_a + S) if (Km_a + S) > 0 else 0.0
+            v_b_mm = Vmax_b * S / (Km_b + S) if (Km_b + S) > 0 else 0.0
+
+            # set exchange lower bounds (negative uptake)
+            ex_id = f"EX_glucose"
+            if ex_id in ma.reactions:
+                ma.reactions.get_by_id(ex_id).lower_bound = -float(v_a_mm)
+            if ex_id in mb.reactions:
+                mb.reactions.get_by_id(ex_id).lower_bound = -float(v_b_mm)
+
+            # optimize
+            try:
+                sol_a = ma.optimize()
+            except Exception:
+                sol_a = None
+            try:
+                sol_b = mb.optimize()
+            except Exception:
+                sol_b = None
+
+            # interpret solution safely
+            if sol_a is not None and getattr(sol_a, 'status', None) == 'optimal':
+                mu_a = float(sol_a.objective_value)
+                flux_ex_a = float(sol_a.fluxes.get(ex_id, 0.0)) if ex_id in sol_a.fluxes else 0.0
+            else:
+                mu_a = 0.0
+                flux_ex_a = 0.0
+
+            if sol_b is not None and getattr(sol_b, 'status', None) == 'optimal':
+                mu_b = float(sol_b.objective_value)
+                flux_ex_b = float(sol_b.fluxes.get(ex_id, 0.0)) if ex_id in sol_b.fluxes else 0.0
+            else:
+                mu_b = 0.0
+                flux_ex_b = 0.0
+
+            # flux_ex is negative for uptake; convert to uptake rate (mmol/gDW/h)
+            uptake_rate_a = max(-flux_ex_a, 0.0)
+            uptake_rate_b = max(-flux_ex_b, 0.0)
+
+            # mass balance: mmol consumed = uptake_rate (mmol/gDW/h) * biomass (gDW) * dt (h)
+            delta_mmol = (uptake_rate_a * Xa_gdw + uptake_rate_b * Xb_gdw) * dt_h
+            # convert mmol -> mM given volume L: mM = mmol / L
+            delta_mM = delta_mmol / max(volume_l, 1e-12)
+            S = max(S - delta_mM, 0.0)
+
+            # biomass update using mu (1/h)
+            Xa_gdw = max(Xa_gdw + mu_a * Xa_gdw * dt_h, 0.0)
+            Xb_gdw = max(Xb_gdw + mu_b * Xb_gdw * dt_h, 0.0)
+
+            # record
+            S_hist.append(S)
+            Xa_gdw_hist.append(Xa_gdw)
+            Xb_gdw_hist.append(Xb_gdw)
+            mu_a_hist.append(mu_a)
+            mu_b_hist.append(mu_b)
+            uptake_a_hist.append(uptake_rate_a)
+            uptake_b_hist.append(uptake_rate_b)
+
+        return {
+            "times": times,
+            "S": np.array(S_hist),
+            "Xa_gdw": np.array(Xa_gdw_hist),
+            "Xb_gdw": np.array(Xb_gdw_hist),
+            "mu_a": np.array(mu_a_hist),
+            "mu_b": np.array(mu_b_hist),
+            "uptake_a": np.array(uptake_a_hist),
+            "uptake_b": np.array(uptake_b_hist),
+        }
+
+    def dfba_sanity_test_unlimited():
+        # unlimited substrate should reproduce unconstrained optimize() objective
+        model = build_minimal_fba_model("glucose")
+        sol = model.optimize()
+        unconstrained_mu = float(sol.objective_value) if getattr(sol, 'status', None) == 'optimal' else 0.0
+        # run dfba with enormous S so MM limit is effectively non-limiting
+        out = _run_dfba_simulation(S0_mM=1e6, duration_h=2.0, dt_h=0.5,
+                                   Vmax_a=1e6, Km_a=1e6, Vmax_b=1e6, Km_b=1e6,
+                                   biomass_conv=biomass_gdw_per_unit, volume_l=VOLUME_L)
+        # compare average mu over first steps
+        mu_avg = float(np.nanmean(out["mu_a"]))
+        ok = np.isfinite(mu_avg) and abs(mu_avg - unconstrained_mu) / max(1e-9, unconstrained_mu) < 1e-2
+        return ok, unconstrained_mu, mu_avg
+
+    def dfba_sanity_test_limited():
+        out = _run_dfba_simulation(S0_mM=1.0, duration_h=24.0, dt_h=0.5,
+                                   Vmax_a=Vmax_a, Km_a=Km_a, Vmax_b=Vmax_b, Km_b=Km_b,
+                                   biomass_conv=biomass_gdw_per_unit, volume_l=VOLUME_L)
+        mu_a = out["mu_a"]
+        # check final mu near zero and no NaNs
+        final_mu = float(mu_a[-1])
+        ok = np.isfinite(final_mu) and final_mu >= 0.0 and final_mu < max(1e-2, float(mu_a[0]) + 1e-6)
+        return ok, float(mu_a[0]), final_mu
+
+    if run:
+        out = _run_dfba_simulation(S0_mM=float(glucose), duration_h=float(duration), dt_h=float(dt),
+                                   Vmax_a=float(Vmax_a), Km_a=float(Km_a), Vmax_b=float(Vmax_b), Km_b=float(Km_b),
+                                   biomass_conv=float(biomass_gdw_per_unit), volume_l=float(VOLUME_L))
+
+        df = pd.DataFrame({"time": out["times"], "S (mM)": out["S"], f"X_{microbe_a} (gDW)": out["Xa_gdw"], f"X_{microbe_b} (gDW)": out["Xb_gdw"], f"mu_{microbe_a}": out["mu_a"], f"mu_{microbe_b}": out["mu_b"]})
+        st.subheader("dFBA time series (mass-balance aware)")
+        st.line_chart(df.set_index("time"))
+
+        # additional diagnostic plots: uptake fluxes and cumulative substrate consumption
+        st.subheader("Διάγραμμα: Ρυθμοί πρόσληψης & Συνολική κατανάλωση υπόστρωματος")
+        uptake_df = pd.DataFrame({"time": out["times"], f"uptake_{microbe_a} (mmol/gDW/h)": out["uptake_a"], f"uptake_{microbe_b} (mmol/gDW/h)": out["uptake_b"], "S (mM)": out["S"]})
+        fig_up, ax_up = plt.subplots(1, 1, figsize=(7, 3))
+        ax_up.plot(uptake_df["time"], uptake_df[f"uptake_{microbe_a} (mmol/gDW/h)"], label=f"uptake_{microbe_a}")
+        ax_up.plot(uptake_df["time"], uptake_df[f"uptake_{microbe_b} (mmol/gDW/h)"], label=f"uptake_{microbe_b}")
+        ax_up.set_xlabel("Time (h)")
+        ax_up.set_ylabel("Uptake (mmol/gDW/h)")
+        ax_up.legend()
+        ax_up_twin = ax_up.twinx()
+        ax_up_twin.plot(uptake_df["time"], uptake_df["S (mM)"], color="gray", linestyle="--", label="S (mM)")
+        ax_up_twin.set_ylabel("Substrate (mM)")
+        ax_up_twin.set_ylim(0, max(1.0, uptake_df["S (mM)"].max()*1.1))
+        st.pyplot(fig_up)
+
+    if run_tests:
+        ok1, unconstrained_mu, mu_avg = dfba_sanity_test_unlimited()
+        ok2, mu0, mu_final = dfba_sanity_test_limited()
+        st.subheader("dFBA Sanity Tests")
+        st.markdown(f"- Unlimited-substrate test: {'PASS' if ok1 else 'FAIL'} — unconstrained_mu={unconstrained_mu:.4g}, dfba_mu_avg={mu_avg:.4g}")
+        st.markdown(f"  - pct_diff = {100.0*(mu_avg-unconstrained_mu)/max(1e-12,abs(unconstrained_mu)):.2f}%")
+        st.markdown(f"- Limited-substrate test: {'PASS' if ok2 else 'FAIL'} — initial_mu={mu0:.4g}, final_mu={mu_final:.4g}")
+        # show sampled mu series and final substrate
+        out_sample = _run_dfba_simulation(S0_mM=1.0, duration_h=24.0, dt_h=0.5, Vmax_a=Vmax_a, Km_a=Km_a, Vmax_b=Vmax_b, Km_b=Km_b, biomass_conv=biomass_gdw_per_unit, volume_l=VOLUME_L)
+        sample_idx = np.linspace(0, len(out_sample['mu_a'])-1, min(12, len(out_sample['mu_a']))).astype(int)
+        st.markdown(f"  - mu_series_sample = {out_sample['mu_a'][sample_idx].tolist()}")
+        st.markdown(f"  - substrate_final_mM = {out_sample['S'][-1]:.6g}")
+        # plot uptake & substrate for the limited test to visualize decline
+        st.subheader("Limited-test diagnostics: uptake & substrate")
+        fig2, ax2 = plt.subplots(1,1,figsize=(7,3))
+        ax2.plot(out_sample['times'], out_sample['uptake_a'], label=f"uptake_{microbe_a}")
+        ax2.plot(out_sample['times'], out_sample['uptake_b'], label=f"uptake_{microbe_b}")
+        ax2.set_xlabel('Time (h)')
+        ax2.set_ylabel('Uptake (mmol/gDW/h)')
+        ax2.legend()
+        ax2_t = ax2.twinx()
+        ax2_t.plot(out_sample['times'], out_sample['S'], color='gray', linestyle='--', label='S (mM)')
+        ax2_t.set_ylabel('Substrate (mM)')
+        st.pyplot(fig2)
 
 
 # ============================================================================
@@ -2074,16 +2580,16 @@ if page == "Προσομοίωση":
                     label, sim_result,
                 )
             st.markdown(
-                f"<span style='font-family:{FONT_MONO}; font-size:0.78rem; color:#5C6B67;'>"
-                f"Ολοκληρώθηκε σε {elapsed*1000:.0f} ms &middot; {len(sim_result['time_steps'])} χρονικά σημεία"
-                f"</span>", unsafe_allow_html=True
+                f'<span style="font-family:{FONT_MONO}; font-size:0.78rem; color:#5C6B67;">'
+                f'Ολοκληρώθηκε σε {elapsed*1000:.0f} ms &middot; {len(sim_result["time_steps"])} χρονικά σημεία'
+                f'</span>', unsafe_allow_html=True
             )
 
             col1, col2 = st.columns([2, 1])
             with col1:
-                st.markdown(f"<div class='eyebrow' style='font-family:{FONT_MONO}; font-size:0.7rem; "
-                            f"letter-spacing:0.1em; color:{COLOR_TARGET}; text-transform:uppercase; "
-                            f"margin-bottom:0.3rem;'>Κατάλογος στόχων-αντιγόνων (PAMPs)</div>",
+                st.markdown(f'<div class="eyebrow" style="font-family:{FONT_MONO}; font-size:0.7rem; '
+                            f'letter-spacing:0.1em; color:{COLOR_TARGET}; text-transform:uppercase; '
+                            f'margin-bottom:0.3rem;">Κατάλογος στόχων-αντιγόνων (PAMPs)</div>',
                             unsafe_allow_html=True)
 
                 # -- Signature component: assay cards για τους 3 στόχους ---------
@@ -2103,9 +2609,9 @@ if page == "Προσομοίωση":
                         )
                         st.caption(f"Βαθμολογία: **{sc.overall_vaccine_score:.1f}**/100")
 
-                st.markdown(f"<div class='eyebrow' style='font-family:{FONT_MONO}; font-size:0.7rem; "
-                            f"letter-spacing:0.1em; color:{COLOR_BYPRODUCT}; text-transform:uppercase; "
-                            f"margin:0.9rem 0 0.3rem 0;'>Παραπροϊόντα ζύμωσης</div>",
+                st.markdown(f'<div class="eyebrow" style="font-family:{FONT_MONO}; font-size:0.7rem; '
+                            f'letter-spacing:0.1em; color:{COLOR_BYPRODUCT}; text-transform:uppercase; '
+                            f'margin:0.9rem 0 0.3rem 0;">Παραπροϊόντα ζύμωσης</div>',
                             unsafe_allow_html=True)
                 bp_cols = st.columns(3)
                 for idx, met in enumerate(BYPRODUCT_METABOLITES):
@@ -2164,7 +2670,7 @@ if page == "Προσομοίωση":
                 st.download_button(
                     "📄 Λήψη Αναφοράς PDF", data=pdf_bytes,
                     file_name=f"vaccine_report_{microbe_a[:3]}_{microbe_b[:3]}.pdf",
-                    mime="application/pdf", use_container_width=False,
+                    mime="application/pdf", use_container_width=True,
                 )
             except ImportError:
                 st.warning("⚠️ Η εξαγωγή PDF απαιτεί το πακέτο `reportlab`. "
@@ -2176,6 +2682,14 @@ if page == "Προσομοίωση":
         st.info("Ρύθμισε τις παραμέτρους στην πλευρική μπάρα και πάτησε "
                 "**🚀 Εκτέλεση Προσομοίωσης**.")
 
+
+# Insert Advanced Screening routing before Batch Analysis
+elif page == "Advanced Screening":
+    show_advanced_screening()
+elif page == "Calibration":
+    show_calibration()
+elif page == "dFBA Prototype":
+    show_dfba_prototype()
 
 # ============================================================================
 # 10. ΣΕΛΙΔΑ: BATCH ANALYSIS (ΠΑΡΑΜΕΤΡΙΚΗ ΣΑΡΩΣΗ)
@@ -2247,7 +2761,7 @@ elif page == "Batch Analysis":
 
             csv = df.to_csv(index=False).encode("utf-8")
             st.download_button("📥 Λήψη αποτελεσμάτων (CSV)", data=csv,
-                                file_name="batch_results.csv", mime="text/csv")
+                                file_name="batch_results.csv", mime="text/csv", use_container_width=True)
     else:
         st.info("Ρύθμισε τις παραμέτρους στην πλευρική μπάρα και πάτησε "
                 "**🚀 Εκτέλεση Batch**.")
@@ -2339,7 +2853,7 @@ elif page == "Monte Carlo":
 
         csv = df.to_csv(index=False).encode("utf-8")
         st.download_button("📥 Λήψη αποτελεσμάτων (CSV)", data=csv,
-                            file_name="monte_carlo_results.csv", mime="text/csv")
+                    file_name="monte_carlo_results.csv", mime="text/csv", use_container_width=True)
     else:
         st.info("Ρύθμισε τις παραμέτρους στην πλευρική μπάρα και πάτησε "
                 "**🚀 Εκτέλεση Monte Carlo**.")
@@ -2411,9 +2925,9 @@ elif page == "Βελτιστοποίηση":
         with col2:
             best = pareto_df.loc[pareto_df["combined"].idxmax()] if not pareto_df.empty else None
             if best is not None:
-                st.markdown(f"<div style='font-family:{FONT_MONO}; font-size:0.7rem; "
-                            f"letter-spacing:0.1em; color:{COLOR_TARGET}; text-transform:uppercase; "
-                            f"margin-bottom:0.3rem;'>Προτεινόμενο σημείο λειτουργίας</div>",
+                st.markdown(f'<div style="font-family:{FONT_MONO}; font-size:0.7rem; '
+                            f'letter-spacing:0.1em; color:{COLOR_TARGET}; text-transform:uppercase; '
+                            f'margin-bottom:0.3rem;">Προτεινόμενο σημείο λειτουργίας</div>',
                             unsafe_allow_html=True)
                 render_assay_card(
                     catalog_no="OPT·01", name=f"{microbe_a[:18]} + {microbe_b[:18]}",
@@ -2435,7 +2949,7 @@ elif page == "Βελτιστοποίηση":
         )
         csv = opt_df.to_csv(index=False).encode("utf-8")
         st.download_button("📥 Λήψη πλήρους πλέγματος (CSV)", data=csv,
-                            file_name="pareto_optimization.csv", mime="text/csv")
+                    file_name="pareto_optimization.csv", mime="text/csv", use_container_width=True)
     else:
         st.info("Ρύθμισε το εύρος αναζήτησης στην πλευρική μπάρα και πάτησε "
                 "**🚀 Εκτέλεση Βελτιστοποίησης**.")
@@ -2653,13 +3167,13 @@ elif page == "Σύγκριση":
             with ccol_mid:
                 delta_score = row_left["avg_score"] - row_right["avg_score"]
                 delta_tox = row_left["toxicity"] - row_right["toxicity"]
-                st.markdown(f"<div style='text-align:center; font-family:{FONT_MONO}; padding-top:2.2rem;'>"
-                            f"<div style='font-size:0.7rem; color:#8A968F;'>Δ ΒΑΘΜΟΛΟΓΙΑ</div>"
-                            f"<div style='font-size:1.3rem; color:{COLOR_TARGET if delta_score >= 0 else COLOR_BYPRODUCT};'>"
-                            f"{delta_score:+.1f}</div>"
-                            f"<div style='font-size:0.7rem; color:#8A968F; margin-top:0.6rem;'>Δ ΤΟΞΙΚΟΤΗΤΑ</div>"
-                            f"<div style='font-size:1.3rem; color:{COLOR_BYPRODUCT if delta_tox >= 0 else COLOR_TARGET};'>"
-                            f"{delta_tox:+.1f}</div></div>", unsafe_allow_html=True)
+                st.markdown(f'<div style="text-align:center; font-family:{FONT_MONO}; padding-top:2.2rem;">'
+                            f'<div style="font-size:0.7rem; color:#8A968F;">Δ ΒΑΘΜΟΛΟΓΙΑ</div>'
+                            f'<div style="font-size:1.3rem; color:{COLOR_TARGET if delta_score >= 0 else COLOR_BYPRODUCT};">'
+                            f'{delta_score:+.1f}</div>'
+                            f'<div style="font-size:0.7rem; color:#8A968F; margin-top:0.6rem;">Δ ΤΟΞΙΚΟΤΗΤΑ</div>'
+                            f'<div style="font-size:1.3rem; color:{COLOR_BYPRODUCT if delta_tox >= 0 else COLOR_TARGET};">'
+                            f'{delta_tox:+.1f}</div></div>', unsafe_allow_html=True)
             with ccol2:
                 st.markdown(f"**{_h2h_label(row_right)}**")
                 st.caption(f"Γλυκόζη {row_right['glucose']:.0f} mM · Διάρκεια {row_right['duration']:.0f}h")
