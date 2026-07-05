@@ -47,11 +47,13 @@ micromol_scorer.py) είναι ενσωματωμένοι εδώ μέσα — Δ
 # ============================================================================
 from __future__ import annotations
 
+import hashlib
 import io
 import json
 import os
 import random
 import sqlite3
+import subprocess
 import sys          # <-- ΠΡΟΣΘΗΚΗ 1
 import time
 from dataclasses import asdict, dataclass, field
@@ -1312,7 +1314,10 @@ def init_db() -> None:
     existing_columns = {row[1] for row in c.fetchall()}
     for col_name, col_type in required_columns.items():
         if col_name not in existing_columns:
-            c.execute(f"ALTER TABLE simulations ADD COLUMN {col_name} {col_type}")
+            try:
+                c.execute(f"ALTER TABLE simulations ADD COLUMN {col_name} {col_type}")
+            except sqlite3.OperationalError:
+                pass
     conn.commit()
     conn.close()
 
