@@ -674,7 +674,7 @@ def create_default_microbes() -> Dict[str, MicrobeProfile]:
             scientific_name="Salmonella enterica serovar Typhimurium",
             gram_stain="negative",
             motile=True,
-            mu_max=0.70,
+            mu_max=0.85,  # RECALIBRATED (was 0.70) - see citation below
             Ks=8.0,
             Y_xs=0.45,
             k_death=0.018,
@@ -684,7 +684,12 @@ def create_default_microbes() -> Dict[str, MicrobeProfile]:
                 "acetate": (0.45, 0.02),
             },
             description="Gram-αρνητικό, πολύ κινητό. Υψηλή παραγωγή LPS & "
-                         "φλαγγελίνης· κλασικό μοντέλο μελέτης PAMPs.",
+                         "φλαγγελίνης· κλασικό μοντέλο μελέτης PAMPs. "
+                         "[mu_max recalibrated July 2026: real S. typhimurium "
+                         "doubling time in glucose-minimal medium is ~48min "
+                         "(mu_max ~0.87/h), DOI 10.1128/jb.114.3.966-973.1973. "
+                         "Original toy value of 0.70 was ~20-25% low. Set to "
+                         "0.85 as a close, slightly conservative estimate.]",
         ),
         "Pseudomonas aeruginosa": MicrobeProfile(
             name="Pseudomonas aeruginosa",
