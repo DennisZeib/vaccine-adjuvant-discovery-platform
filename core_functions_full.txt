@@ -1,0 +1,351 @@
+=== _KNOWLEDGE_BASE (starts line 1209) ===
+_KNOWLEDGE_BASE: Dict[str, dict] = {
+    "polysaccharide_lps": {
+        "immunogenicity": 95.0,
+        "safety": 40.0,   # ενδοτοξίνη -> κίνδυνος υπερδιέγερσης / σηπτικού shock
+        "stability": 85.0,
+        "receptor": "TLR4 / MD-2",
+        "ec50": 5.0,
+        "hill_n": 1.5,
+        "note": "Ισχυρό PAMP· υψηλή ανοσογονικότητα αντισταθμίζεται από "
+                "κίνδυνο τοξικότητας ενδοτοξίνης σε υψηλές δόσεις.",
+    },
+    "mannan_polysaccharide": {
+        "immunogenicity": 70.0,
+        "safety": 88.0,
+        "stability": 90.0,
+        "receptor": "Dectin-1 / TLR2 / Mannose Receptor",
+        "ec50": 8.0,
+        "hill_n": 1.2,
+        "note": "Μέτρια ανοσογονικότητα, πολύ καλό προφίλ ασφαλείας και "
+                "σταθερότητας. Καλός υποψήφιος για ήπιο adjuvant.",
+    },
+    "flagellin": {
+        "immunogenicity": 80.0,
+        "safety": 75.0,
+        "stability": 60.0,   # πρωτεΐνη -> λιγότερο σταθερή θερμικά
+        "receptor": "TLR5",
+        "ec50": 3.0,
+        "hill_n": 1.8,
+        "note": "Καλά τεκμηριωμένο ανοσοδιεγερτικό μόριο (χρησιμοποιείται σε "
+                "ερευνητικές πλατφόρμες εμβολίων). Μειωμένη σταθερότητα λόγω "
+                "πρωτεϊνικής φύσης.",
+    },
+
+================================================================================
+
+=== _DEFAULT_PROFILE (starts line 1244) ===
+_DEFAULT_PROFILE = {
+    "immunogenicity": 5.0,
+    "safety": 50.0,
+    "stability": 50.0,
+    "receptor": None,
+    "ec50": 10.0,
+    "hill_n": 1.0,
+    "note": "Δεν αναγνωρίζεται ως γνωστό PAMP/ανοσοδιεγερτικό αντιγόνο· "
+            "αποδίδεται χαμηλή βαθμολογία-στόχος από προεπιλογή.",
+
+================================================================================
+
+=== create_default_microbes (starts line 644) ===
+def create_default_microbes() -> Dict[str, MicrobeProfile]:
+    """Επιστρέφει το προεπιλεγμένο σύνολο μικροβίων προς προσομοίωση.
+
+    Οι τιμές mu_max/Ks/Y_xs/k_death είναι ρεαλιστικής τάξης μεγέθους για
+    κάθε είδος (π.χ. το E. coli αναπτύσσεται γρηγορότερα από τη ζύμη),
+    αλλά παραμένουν απλοποιημένες παράμετροι επίδειξης.
+    """
+    microbes: Dict[str, MicrobeProfile] = {
+        "Escherichia coli K-12": MicrobeProfile(
+            name="Escherichia coli K-12",
+            scientific_name="Escherichia coli",
+            gram_stain="negative",
+            motile=True,
+            mu_max=0.85,
+            Ks=5.0,
+            Y_xs=0.50,
+            k_death=0.015,
+            production={
+                # PAMP-στόχοι (targets)
+                "polysaccharide_lps": (0.90, 0.05),
+                "flagellin": (0.35, 0.02),
+                # Παραπροϊόντα (byproducts) - υπερχείλιση μεταβολισμού (overflow)
+                "acetate": (0.60, 0.03),
+                "lactate": (0.10, 0.01),
+            },
+            description="Gram-αρνητικό, κινητό. Ισχυρός παραγωγός LPS (TLR4) "
+                         "και φλαγγελίνης (TLR5). Τυπικό εργαλείο βιοτεχνολογίας.",
+        ),
+        "Salmonella enterica": MicrobeProfile(
+            name="Salmonella enterica",
+            scientific_name="Salmonella enterica serovar Typhimurium",
+            gram_stain="negative",
+            motile=True,
+            mu_max=0.70,
+            Ks=8.0,
+            Y_xs=0.45,
+            k_death=0.018,
+            production={
+                "polysaccharide_lps": (1.10, 0.08),
+                "flagellin": (0.55, 0.04),
+                "acetate": (0.45, 0.02),
+            },
+            description="Gram-αρνητικό, πολύ κινητό. Υψηλή παραγωγή LPS & "
+                         "φλαγγελίνης· κλασικό μοντέλο μελέτης PAMPs.",
+        ),
+        "Pseudomonas aeruginosa": MicrobeProfile(
+            name="Pseudomonas aeruginosa",
+            scientific_name="Pseudomonas aeruginosa",
+            gram_stain="negative",
+            motile=True,
+            mu_max=0.55,
+            Ks=6.0,
+            Y_xs=0.48,
+            k_death=0.012,
+            production={
+                "polysaccharide_lps": (0.65, 0.04),
+                "flagellin": (0.75, 0.05),
+                "acetate": (0.20, 0.01),
+            },
+            description="Gram-αρνητικό, ευκαιριακό παθογόνο. Εξαιρετικά "
+                         "κινητό -> υψηλή φλαγγελίνη, μέτριο LPS.",
+        ),
+        "Klebsiella pneumoniae": MicrobeProfile(
+            name="Klebsiella pneumoniae",
+            scientific_name="Klebsiella pneumoniae",
+            gram_stain="negative",
+            motile=False,
+            mu_max=0.75,
+            Ks=7.0,
+            Y_xs=0.47,
+            k_death=0.014,
+            production={
+                "polysaccharide_lps": (1.20, 0.10),
+                "mannan_polysaccharide": (0.15, 0.02),  # καψιδιακό πολυσακχαρίδιο
+                "acetate": (0.55, 0.03),
+            },
+            description="Gram-αρνητικό, ακινητο, ισχυρά ενθυλακωμένο (capsule) "
+                         "-> πολύ υψηλή παραγωγή LPS και καψιδιακών πολυσακχαριτών.",
+        ),
+        "Bacillus subtilis": MicrobeProfile(
+            name="Bacillus subtilis",
+            scientific_name="Bacillus subtilis",
+            gram_stain="positive",
+            motile=True,
+            mu_max=0.65,
+            Ks=4.0,
+            Y_xs=0.55,
+            k_death=0.010,
+            production={
+                # Gram-θετικό -> ΔΕΝ διαθέτει LPS (εξωτερική μεμβράνη).
+                "flagellin": (0.40, 0.03),
+                "lactate": (0.25, 0.02),
+            },
+            description="Gram-θετικό, κινητό, σπορογόνο. Χωρίς LPS· καλός "
+                         "παραγωγός φλαγγελίνης. Ασφαλές, καλά χαρακτηρισμένο.",
+        ),
+        "Lactobacillus plantarum": MicrobeProfile(
+            name="Lactobacillus plantarum",
+            scientific_name="Lactiplantibacillus plantarum",
+            gram_stain="positive",
+            motile=False,
+            mu_max=0.90,
+            Ks=3.0,
+            Y_xs=0.60,
+            k_death=0.008,
+            production={
+                "lactate": (0.85, 0.06),
+                "acetate": (0.10, 0.01),
+            },
+            description="Gram-θετικό, ομοζυμωτικό γαλακτοβάκιλλο. Χωρίς LPS/"
+                         "φλαγγελίνη· κυρίως παραγωγός γαλακτικού οξέος (τοξικότητα).",
+        ),
+        "Staphylococcus aureus": MicrobeProfile(
+            name="Staphylococcus aureus",
+            scientific_name="Staphylococcus aureus",
+            gram_stain="positive",
+            motile=False,
+            mu_max=0.60,
+            Ks=5.0,
+            Y_xs=0.52,
+            k_death=0.011,
+            production={
+                "lactate": (0.30, 0.02),
+                "acetate": (0.20, 0.01),
+            },
+            description="Gram-θετικό, ακίνητο. Χαμηλή παραγωγή στόχων-PAMP· "
+                         "χρησιμεύει ως μικρόβιο ελέγχου/αναφοράς (control).",
+        ),
+        "Saccharomyces cerevisiae": MicrobeProfile(
+            name="Saccharomyces cerevisiae",
+            scientific_name="Saccharomyces cerevisiae",
+            gram_stain="yeast",
+            motile=False,
+            mu_max=0.45,
+            Ks=10.0,
+            Y_xs=0.40,
+            k_death=0.009,
+            production={
+                "mannan_polysaccharide": (1.30, 0.08),
+                "ethanol": (1.50, 0.10),
+            },
+            description="Ευκαρυωτική ζύμη. Το κυτταρικό της τοίχωμα είναι "
+                         "πλούσιο σε μαννάνη (Dectin-1/TLR2)· παράγει αιθανόλη "
+                         "μέσω ζύμωσης (υψηλή τοξικότητα σε υψηλή γλυκόζη).",
+            allergy_risk=0.30,
+            symptom_risk=0.22,
+            study_note="Αυτό το είδος είναι πολύ χρήσιμο για μελέτες μαννάνης, αλλά απαιτεί προσοχή σε άτομα με ευαισθησία σε ζύμες ή έντονα ανοσολογικά ερεθίσματα.",
+        ),
+        "Bifidobacterium breve": MicrobeProfile(
+            name="Bifidobacterium breve",
+            scientific_name="Bifidobacterium breve",
+            gram_stain="positive",
+            motile=False,
+            mu_max=0.40,
+            Ks=3.5,
+            Y_xs=0.58,
+            k_death=0.006,
+            production={
+                "mannan_polysaccharide": (0.18, 0.01),
+                "lactate": (0.20, 0.01),
+            },
+            description="Προβιοτικό βακτήριο με ήπιο ανοσολογικό προφίλ και ενδιαφέρον ως ασφαλής συν-καλλιεργητής για adjuvant studies.",
+            allergy_risk=0.04,
+            symptom_risk=0.06,
+            study_note="Χαμηλή τοξικότητα και χαμηλή αλλεργική επιβάρυνση, ιδανικό για ήπιες συνδυαστικές στρατηγικές.",
+        ),
+        "Lactococcus lactis": MicrobeProfile(
+            name="Lactococcus lactis",
+            scientific_name="Lactococcus lactis",
+            gram_stain="positive",
+            motile=False,
+            mu_max=0.50,
+            Ks=2.8,
+            Y_xs=0.62,
+            k_death=0.007,
+            production={
+                "flagellin": (0.15, 0.01),
+                "lactate": (0.40, 0.02),
+            },
+            description="Γαλακτοκομικό βακτήριο με καλή βιοασφάλεια και χαμηλό άγχος για το ανοσοποιητικό σύστημα.",
+            allergy_risk=0.05,
+            symptom_risk=0.05,
+            study_note="Προτείνεται για μελέτες που στοχεύουν μειωμένα αντιδράσεις και ήπια ανοσολογικά σήματα.",
+        ),
+        "Corynebacterium glutamicum": MicrobeProfile(
+            name="Corynebacterium glutamicum",
+            scientific_name="Corynebacterium glutamicum",
+            gram_stain="positive",
+            motile=False,
+            mu_max=0.42,
+            Ks=4.2,
+            Y_xs=0.57,
+            k_death=0.008,
+            production={
+                "mannan_polysaccharide": (0.22, 0.01),
+                "acetate": (0.18, 0.01),
+            },
+            description="Βιοτεχνολογικό βακτήριο με ενδιαφέρον για χαμηλή τοξικότητα και σταθερά ανοσολογικά σήματα.",
+            allergy_risk=0.06,
+            symptom_risk=0.07,
+            study_note="Καλή επιλογή για συνδυασμούς που θέλουν ισορροπημένο ανοσολογικό προφίλ και μικρότερο όγκο παρενεργειών.",
+        ),
+        "Rhodobacter sphaeroides": MicrobeProfile(
+            name="Rhodobacter sphaeroides",
+            scientific_name="Rhodobacter sphaeroides",
+            gram_stain="negative",
+            motile=True,
+            mu_max=0.48,
+            Ks=5.5,
+            Y_xs=0.46,
+            k_death=0.010,
+            production={
+                "polysaccharide_lps": (0.55, 0.03),
+                "flagellin": (0.25, 0.02),
+                "acetate": (0.15, 0.01),
+            },
+            description="Φωτοτροφικό βακτήριο με ενδιαφέρον για έρευνα με χαμηλό-μεσαίο ανοσολογικό φορτίο και εύρωστη ανάπτυξη.",
+            allergy_risk=0.10,
+            symptom_risk=0.12,
+            study_note="Κατάλληλο για έρευνα που αξιολογεί ισορροπημένα PAMP και λιγότερο έντονη τοξικότητα σε συγκριτικές μελέτες.",
+        ),
+        "Vibrio natriegens": MicrobeProfile(
+            name="Vibrio natriegens",
+            scientific_name="Vibrio natriegens",
+            gram_stain="negative",
+            motile=True,
+            mu_max=1.20,
+            Ks=7.5,
+            Y_xs=0.43,
+            k_death=0.020,
+            production={
+                "polysaccharide_lps": (0.95, 0.06),
+                "flagellin": (0.60, 0.04),
+                "acetate": (0.35, 0.02),
+            },
+            description="Γρήγορα αναπτυσσόμενο θαλάσσιο βακτήριο υψηλής παραγωγικότητας, χρήσιμο για ερευνητικές συγκρίσεις ταχύτητας και σήματος.",
+            allergy_risk=0.18,
+            symptom_risk=0.20,
+            study_note="Υψηλότερο ανοσολογικό φορτίο, άρα καλύτερο για μελέτες φάσματος αλλά όχι για συνδυασμούς με χαμηλή αντοχή σε αντιδράσεις.",
+        ),
+        "Bacillus licheniformis": MicrobeProfile(
+            name="Bacillus licheniformis",
+            scientific_name="Bacillus licheniformis",
+            gram_stain="positive",
+            motile=True,
+            mu_max=0.58,
+            Ks=4.8,
+            Y_xs=0.53,
+            k_death=0.009,
+            production={
+                "flagellin": (0.35, 0.02),
+                "lactate": (0.18, 0.01),
+            },
+            description="Γραμμα-θετικό βακτήριο με δραστηριότητα φλαγγελίνης και ενδιαφέρον για βιοτεχνολογικές προσεγγίσεις.",
+            allergy_risk=0.08,
+            symptom_risk=0.10,
+            study_note="Χρήσιμο για τη διερεύνηση εναλλακτικών συνδυασμών με ισορροπημένη ανοσολογική ένταση.",
+        ),
+        "Mycobacterium smegmatis": MicrobeProfile(
+            name="Mycobacterium smegmatis",
+            scientific_name="Mycobacterium smegmatis",
+            gram_stain="positive",
+            motile=False,
+            mu_max=0.35,
+            Ks=6.0,
+            Y_xs=0.49,
+            k_death=0.007,
+            production={
+                "mannan_polysaccharide": (0.40, 0.02),
+                "acetate": (0.12, 0.01),
+            },
+            description="Βακτήριο-μοντέλο με ισχυρό μεταβολικό σήμα και ενδιαφέρον για έρευνα adjuvant σε ασφαλή, ελεγχόμενη κλίμακα.",
+            allergy_risk=0.09,
+            symptom_risk=0.11,
+            study_note="Μέτρια ανοσολογική επιβάρυνση, καλά κατάλληλο για πειραματικά σύνολα που δίνουν προτεραιότητα στη μείωση του φορτίου παρενεργειών.",
+        ),
+        "Clostridium sporogenes": MicrobeProfile(
+            name="Clostridium sporogenes",
+            scientific_name="Clostridium sporogenes",
+            gram_stain="positive",
+            motile=False,
+            mu_max=0.32,
+            Ks=5.0,
+            Y_xs=0.51,
+            k_death=0.005,
+            production={
+                "lactate": (0.25, 0.02),
+                "acetate": (0.16, 0.01),
+            },
+            description="Σπόρογόνο βακτήριο με πολύ χαμηλό προφίλ ενόχλησης για αρχικές μελέτες ασφάλειας και συνδυασμών.",
+            allergy_risk=0.03,
+            symptom_risk=0.04,
+            study_note="Ιδανικό για συνδυασμούς που θέλουν να εξετάσουν ένα πιο ήπιο, πιο ελεγχόμενο ανοσολογικό σήμα.",
+        ),
+    }
+    return microbes
+
+
+
+================================================================================
+

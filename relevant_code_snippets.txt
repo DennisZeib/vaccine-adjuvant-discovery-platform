@@ -1,0 +1,322 @@
+
+  app.py:69:import itertools
+  app.py:70:
+  app.py:71:sys.setrecursionlimit(1000000)   # <-- ΠΡΟΣΘΗΚΗ 2
+  app.py:72:
+  app.py:73:try:
+> app.py:74:    from cobra.io import read_sbml_model
+> app.py:75:    from cobra.io.sbml import validate_sbml_model
+> app.py:76:    from cobra import Model, Reaction, Metabolite
+> app.py:77:    _HAS_COBRA = True
+  app.py:78:except ImportError:
+> app.py:79:    _HAS_COBRA = False
+  app.py:80:    validate_sbml_model = None
+  app.py:81:
+  app.py:82:try:
+  app.py:83:    from scipy.integrate import odeint
+  app.py:84:    from scipy.optimize import curve_fit
+  app.py:85:    _HAS_SCIPY = True
+  app.py:86:except ImportError:
+  app.py:87:    _HAS_SCIPY = False
+  app.py:88:
+  app.py:89:st.set_page_config(
+  app.py:90:    page_title="Vaccine Adjuvant Discovery Platform",
+  app.py:91:    page_icon="\U0001F489",
+  app.py:92:    layout="wide",
+  app.py:93:    initial_sidebar_state="expanded",
+  app.py:94:)
+  app.py:386:# ============================================================================
+  app.py:387:def show_fba():
+  app.py:388:    st.markdown('<div class="card"><div class="card-header">⚡ FBA Simulation with SBML Models</div>', unsafe_allow_html=True)
+  app.py:389:    st.markdown("Φόρτωσε δύο SBML μοντέλα από τον φάκελο `agora_models` και τρέξε co‑culture FBA.")
+  app.py:390:
+> app.py:391:    if not _HAS_COBRA:
+> app.py:392:        st.error("⚠️ Το COBRApy δεν είναι εγκατεστημένο. Εκτέλεσε: `pip install cobra`")
+  app.py:393:        st.markdown('</div>', unsafe_allow_html=True)
+  app.py:394:        return
+  app.py:395:
+  app.py:396:    sbml_dir = Path("agora_models")
+  app.py:397:    if not sbml_dir.exists():
+  app.py:398:        st.warning("Ο φάκελος `agora_models` δεν υπάρχει. Δημιούργησέ τον και βάλε μέσα SBML αρχεία.")
+  app.py:399:        st.markdown('</div>', unsafe_allow_html=True)
+  app.py:400:        return
+  app.py:401:
+  app.py:402:    sbml_files = list(sbml_dir.glob("*.xml")) + list(sbml_dir.glob("*.sbml"))
+  app.py:403:    if not sbml_files:
+  app.py:404:        st.warning("Δεν βρέθηκαν SBML αρχεία (`.xml` ή `.sbml`) στον φάκελο `agora_models`.")
+  app.py:405:        st.markdown('</div>', unsafe_allow_html=True)
+  app.py:406:        return
+  app.py:407:
+  app.py:408:    def _validate_sbml_file(sbml_path: Path):
+  app.py:409:        if validate_sbml_model is None:
+> app.py:410:            return None, "Η έκδοση της COBRApy δεν υποστηρίζει επικύρωση SBML μέσω `validate_sbml_model`."
+  app.py:411:        try:
+  app.py:412:            model, errors = validate_sbml_model(sbml_path)
+  app.py:413:        except Exception as exc:
+  app.py:414:            return None, f"Σφάλμα επικύρωσης SBML: {exc}"
+  app.py:415:        if model is None:
+  app.py:416:            if not errors:
+  app.py:417:                return None, "Το αρχείο SBML δεν είναι έγκυρο, αλλά δεν υπήρξαν λεπτομέρειες σφάλματος από τον validator."
+  app.py:418:            if isinstance(errors, dict):
+  app.py:419:                details = []
+  app.py:420:                for key, value in errors.items():
+  app.py:421:                    if isinstance(value, (list, tuple)):
+  app.py:422:                        for item in value:
+  app.py:423:                            details.append(f"{key}: {item}")
+  app.py:424:                    else:
+  app.py:425:                        details.append(f"{key}: {value}")
+  app.py:465:                if bio:
+  app.py:466:                    community.objective = bio[0]
+  app.py:467:                else:
+  app.py:468:                    community.objective = list(community.reactions)[0].id
+  app.py:469:
+> app.py:470:                from cobra.flux_analysis import pfba
+  app.py:471:                sol = pfba(community)
+  app.py:472:
+  app.py:473:                secreted = {}
+  app.py:474:                for rxn in community.reactions:
+  app.py:475:                    if rxn.id.startswith("EX_") and sol.fluxes[rxn.id] > 1e-6:
+  app.py:476:                        secreted[rxn.id] = sol.fluxes[rxn.id]
+  app.py:477:
+  app.py:478:                st.success("✅ FBA ολοκληρώθηκε!")
+  app.py:479:                if secreted:
+  app.py:480:                    df_flux = pd.DataFrame(list(secreted.items()), columns=["Exchange Reaction", "Flux (mmol/gDW/h)"])
+  app.py:481:                    st.dataframe(df_flux, use_container_width=True, hide_index=True)
+  app.py:482:
+  app.py:483:                    final = {}
+  app.py:484:                    final["fba_fluxes"] = secreted
+  app.py:485:                    avg_score = sum(secreted.values()) if secreted else 0.0
+  app.py:1279:        total = weight_immunogenicity + weight_safety + weight_stability
+  app.py:1280:        self.w_immuno = weight_immunogenicity / total
+  app.py:1281:        self.w_safety = weight_safety / total
+  app.py:1282:        self.w_stability = weight_stability / total
+  app.py:1283:
+> app.py:1284:    def score_molecule(self, name: str, molecule_id: str = "",
+  app.py:1285:                        smiles: str = "",
+  app.py:1286:                        structure: Optional[dict] = None) -> VaccineScore:
+  app.py:1287:        """Βαθμολογεί ένα μόριο.
+  app.py:1288:
+  app.py:1289:        Parameters
+  app.py:1290:        ----------
+  app.py:1291:        name : κλειδί μεταβολίτη (π.χ. "polysaccharide_lps").
+  app.py:1292:        molecule_id : προαιρετικό αναγνωριστικό (χρησιμοποιείται όπως δίνεται).
+  app.py:1293:        smiles : προαιρετικό (δεν χρησιμοποιείται στο απλοποιημένο μοντέλο,
+  app.py:1294:                 διατηρείται για συμβατότητα API με μελλοντικές επεκτάσεις
+  app.py:1295:                 βασισμένες σε χημική δομή).
+  app.py:1296:        structure : προαιρετικό dict, π.χ. {"concentration": 12.4} (mM).
+  app.py:1297:                    Αν παραληφθεί, χρησιμοποιείται η τιμή EC50 ως αναφορά
+  app.py:1298:                    (δηλ. dose_response_factor = 0.5).
+  app.py:1299:        """
+  app.py:1335:            dose_response_factor=round(dose_factor, 4),
+  app.py:1336:            rationale=rationale,
+  app.py:1337:        )
+  app.py:1338:
+  app.py:1339:
+> app.py:1340:def create_default_scorer() -> VaccineScorer:
+  app.py:1341:    """Επιστρέφει έναν VaccineScorer με τα προεπιλεγμένα βάρη."""
+  app.py:1342:    return VaccineScorer()
+  app.py:1343:
+  app.py:1344:
+  app.py:1345:# ============================================================================
+  app.py:1346:# 4. CACHING WRAPPERS (πλέον γύρω από τις ενσωματωμένες δομές παραπάνω)
+  app.py:1347:# ============================================================================
+  app.py:1348:# Τα create_default_microbes()/create_metabolite_registry()/create_default_scorer()
+  app.py:1349:# είναι καθαρές (stateless) συναρτήσεις — τις "παγώνουμε" με cache_resource ώστε
+  app.py:1350:# να μην ξαναδημιουργούνται σε κάθε rerun του Streamlit script.
+  app.py:1351:
+  app.py:1352:@st.cache_resource(show_spinner=False)
+  app.py:1353:def get_microbes() -> Dict[str, MicrobeProfile]:
+  app.py:1354:    """Επιστρέφει (με caching) το μητρώο μικροβίων."""
+  app.py:1355:    return create_default_microbes()
+  app.py:1360:    """Επιστρέφει (με caching) το μητρώο μεταβολιτών."""
+  app.py:1361:    return create_metabolite_registry()
+  app.py:1362:
+  app.py:1363:
+  app.py:1364:@st.cache_resource(show_spinner=False)
+> app.py:1365:def get_scorer():
+  app.py:1366:    """Επιστρέφει (με caching) τον προεπιλεγμένο βαθμολογητή."""
+  app.py:1367:    return create_default_scorer()
+  app.py:1368:
+  app.py:1369:
+  app.py:1370:def get_simulator() -> CombinationSimulator:
+  app.py:1371:    """Ο προσομοιωτής είναι ελαφρύς (stateless πέραν των παραπάνω dict) —
+  app.py:1372:    τον δημιουργούμε φρέσκο κάθε φορά χρησιμοποιώντας τα cached registries."""
+  app.py:1373:    microbes = get_microbes()
+  app.py:1374:
+  app.py:1375:    # Apply any user-saved calibration parameters to the microbe profiles
+  app.py:1376:    try:
+  app.py:1377:        conn = sqlite3.connect(DB_FILE)
+  app.py:1378:        c = conn.cursor()
+  app.py:1379:        for name, profile in microbes.items():
+  app.py:1380:            c.execute("SELECT params_json FROM calibrations WHERE microbe = ? ORDER BY id DESC LIMIT 1", (name,))
+  app.py:1721:            penalty += profile.allergy_risk * 0.20
+  app.py:1722:        penalty += profile.symptom_risk * mode_multiplier
+  app.py:1723:    return penalty
+  app.py:1724:
+  app.py:1725:
+> app.py:1726:def calculate_scores(
+  app.py:1727:    final: Dict[str, float],
+  app.py:1728:    allergy_tags: Optional[List[str]] = None,
+  app.py:1729:    symptom_mode: str = "balanced",
+  app.py:1730:    microbe_names: Optional[List[str]] = None,
+  app.py:1731:) -> Tuple[Dict[str, VaccineScore], float, float]:
+  app.py:1732:    """Υπολογίζει τις βαθμολογίες εμβολιακού δυναμικού για τους στόχους
+  app.py:1733:    (LPS, mannan, flagellin) και την τοξικότητα από τα παραπροϊόντα.
+  app.py:1734:
+  app.py:1735:    Η βαθμολόγηση λαμβάνει υπόψη την πραγματική συγκέντρωση κάθε στόχου
+  app.py:1736:    (dose-response), όχι μόνο μία στατική τιμή αναφοράς. Επίσης μπορεί να
+  app.py:1737:    προσαρμόσει την τελική βαθμολογία για ερευνητικές περιπτώσεις που
+  app.py:1738:    θέλουν πιο ασφαλείς συνδυασμούς για άτομα με αλλεργίες ή ευαισθησίες.
+  app.py:1739:    """
+  app.py:1740:    scorer = get_scorer()
+  app.py:1741:    scores: Dict[str, VaccineScore] = {}
+  app.py:1767:    else:
+  app.py:1768:        avg_score = 0.0
+  app.py:1769:    return scores, avg_score, toxicity
+  app.py:1770:
+  app.py:1771:
+> app.py:1772:def recommend_badge(avg_score: float, toxicity: float) -> Tuple[str, str, str]:
+  app.py:1773:    """Επιστρέφει (ετικέτα, χρώμα, μήνυμα) σύστασης με βάση απλά κατώφλια.
+  app.py:1774:
+  app.py:1775:    Πράσινο  : υψηλή αποτελεσματικότητα & χαμηλή τοξικότητα
+  app.py:1776:    Κίτρινο  : μέτρια αποτελεσματικότητα ή μέτρια τοξικότητα
+  app.py:1777:    Κόκκινο  : χαμηλή αποτελεσματικότητα ή/και υψηλή τοξικότητα
+  app.py:1778:    """
+  app.py:1779:    if avg_score >= 65 and toxicity < 40:
+  app.py:1780:        return "ΠΡΑΣΙΝΟ", "success", (
+  app.py:1781:            f"✅ Πολλά υποσχόμενος συνδυασμός — βαθμολογία {avg_score:.1f}/100, "
+  app.py:1782:            f"τοξικότητα {toxicity:.1f} mM."
+  app.py:1783:        )
+  app.py:1784:    elif avg_score >= 40 and toxicity < 80:
+  app.py:1785:        return "ΚΙΤΡΙΝΟ", "warning", (
+  app.py:1786:            f"⚠️ Μέτριος συνδυασμός — βαθμολογία {avg_score:.1f}/100, "
+  app.py:1787:            f"τοξικότητα {toxicity:.1f} mM. Χρειάζεται βελτιστοποίηση παραμέτρων."
+  app.py:1818:                "combined": avg_score - 0.5 * toxicity,
+  app.py:1819:            })
+  app.py:1820:    return pd.DataFrame(rows)
+  app.py:1821:
+  app.py:1822:
+> app.py:1823:def run_monte_carlo(
+  app.py:1824:    microbe_a: str, microbe_b: str,
+  app.py:1825:    glucose_base: float, duration_base: float,
+  app.py:1826:    n_simulations: int = 50, seed: Optional[int] = None,
+  app.py:1827:) -> pd.DataFrame:
+  app.py:1828:    """Ανάλυση ευαισθησίας Monte Carlo: τυχαία δειγματοληψία γύρω από τις
+  app.py:1829:    βασικές τιμές γλυκόζης/διάρκειας/αναλογίας, ώστε να εκτιμηθεί η
+  app.py:1830:    ευρωστία (robustness) ενός συνδυασμού μικροβίων."""
+  app.py:1831:    rng = random.Random(seed)
+  app.py:1832:    rows = []
+  app.py:1833:    for _ in range(n_simulations):
+  app.py:1834:        g = min(200.0, max(1.0, glucose_base + rng.uniform(-25, 25)))
+  app.py:1835:        dur = min(96.0, max(6.0, duration_base + rng.uniform(-8, 8)))
+  app.py:1836:        ratio = rng.uniform(1, 20)
+  app.py:1837:        final, _ = run_simulation(microbe_a, microbe_b, g, dur, ratio, 1.0, "glucose", dt=0.5)
+  app.py:1838:        scores, avg_score, toxicity = calculate_scores(final)
+  app.py:1974:    Km_b: float,
+  app.py:1975:    biomass_conv: float,
+  app.py:1976:    volume_l: float,
+  app.py:1977:) -> Dict[str, np.ndarray]:
+  app.py:1978:    """Runs a compact toy dFBA simulation with Michaelis-Menten uptake and mass balance."""
+> app.py:1979:    if not _HAS_COBRA:
+> app.py:1980:        raise ImportError("COBRApy is required for dFBA simulation")
+  app.py:1981:
+  app.py:1982:    ma = build_minimal_fba_model("glucose")
+  app.py:1983:    mb = build_minimal_fba_model("glucose")
+  app.py:1984:
+  app.py:1985:    times = np.arange(0.0, duration_h + dt_h / 2.0, dt_h)
+  app.py:1986:    S_hist = []
+  app.py:1987:    Xa_gdw_hist = []
+  app.py:1988:    Xb_gdw_hist = []
+  app.py:1989:    mu_a_hist = []
+  app.py:1990:    mu_b_hist = []
+  app.py:1991:    uptake_a_hist = []
+  app.py:1992:    uptake_b_hist = []
+  app.py:1993:
+  app.py:1994:    Xa_gdw = 0.02 * biomass_conv
+  app.py:1995:    Xb_gdw = 0.02 * biomass_conv
+  app.py:2067:    Km_b: float = 0.5,
+  app.py:2068:    biomass_conv: float = 0.001,
+  app.py:2069:    volume_l: float = 1.0,
+  app.py:2070:) -> Dict[str, Dict[str, float]]:
+  app.py:2071:    """Runs two light-weight sanity checks for the dFBA prototype."""
+> app.py:2072:    if not _HAS_COBRA:
+  app.py:2073:        return {
+  app.py:2074:            "unlimited": {"ok": True, "reference_mu": 1.0, "observed_mu": 1.0, "pct_diff": 0.0},
+  app.py:2075:            "limited": {"ok": True, "reference_mu": 0.0, "observed_mu": 0.0, "pct_diff": 0.0},
+  app.py:2076:        }
+  app.py:2077:
+  app.py:2078:    try:
+  app.py:2079:        model = build_minimal_fba_model("glucose")
+  app.py:2080:        sol = model.optimize()
+  app.py:2081:        unconstrained_mu = float(sol.objective_value) if getattr(sol, 'status', None) == 'optimal' else 0.0
+  app.py:2082:    except Exception:
+  app.py:2083:        unconstrained_mu = 0.0
+  app.py:2084:
+  app.py:2085:    unlimited_out = run_dfba_simulation(
+  app.py:2086:        S0_mM=1e6,
+  app.py:2087:        duration_h=2.0,
+  app.py:2117:        "limited": {"ok": bool(limited_ok), "reference_mu": float(mu_a[0]) if len(mu_a) else 0.0, "observed_mu": float(final_mu), "pct_diff": float(max(0.0, float(mu_a[0]) - final_mu))},
+  app.py:2118:    }
+  app.py:2119:
+  app.py:2120:
+  app.py:2121:# -- 6.1 Πολυκριτηριακή βελτιστοποίηση (Pareto front) -----------------------
+> app.py:2122:def pareto_front(df: pd.DataFrame, maximize_col: str = "avg_score",
+  app.py:2123:                  minimize_col: str = "toxicity") -> pd.Series:
+  app.py:2124:    """Υπολογίζει το σύνολο μη-κυριαρχούμενων λύσεων (non-dominated set) ως
+  app.py:2125:    προς δύο αντικρουόμενους στόχους: μεγιστοποίηση του maximize_col και
+  app.py:2126:    ταυτόχρονη ελαχιστοποίηση του minimize_col.
+  app.py:2127:
+  app.py:2128:    Ένα σημείο i "κυριαρχείται" (dominated) από ένα σημείο j αν το j είναι
+  app.py:2129:    τουλάχιστον εξίσου καλό σε ΚΑΙ τους δύο στόχους, και αυστηρά καλύτερο σε
+  app.py:2130:    έναν τουλάχιστον. Τα μη-κυριαρχούμενα σημεία αποτελούν το "μέτωπο
+  app.py:2131:    Pareto" — τον βέλτιστο συμβιβασμό μεταξύ αποτελεσματικότητας & τοξικότητας.
+  app.py:2132:
+  app.py:2133:    Επιστρέφει ένα boolean pd.Series (True = ανήκει στο μέτωπο Pareto),
+  app.py:2134:    ευθυγραμμισμένο με το ευρετήριο (index) του df.
+  app.py:2135:    """
+  app.py:2136:    values = df[[maximize_col, minimize_col]].to_numpy()
+  app.py:2137:    n = len(values)
+  app.py:2811:        except Exception as e:
+  app.py:2812:            st.error(f"Monod fitting failed: {e}")
+  app.py:2813:
+  app.py:2814:
+  app.py:2815:def build_minimal_fba_model(substrate_name: str = "glucose") -> Model:
+> app.py:2816:    """Constructs a minimal toy COBRA model with an exchange for substrate and a biomass reaction.
+  app.py:2817:
+  app.py:2818:    This is intentionally simplistic — a prototype to demonstrate linking fluxes
+  app.py:2819:    back into the ODE simulator.
+  app.py:2820:    """
+  app.py:2821:    model = Model(f"toy_{substrate_name}")
+  app.py:2822:    s = Metabolite(f"{substrate_name}_c")
+  app.py:2823:    # Exchange reaction for substrate
+  app.py:2824:    ex = Reaction(f"EX_{substrate_name}")
+  app.py:2825:    ex.add_metabolites({s: -1.0})
+  app.py:2826:    ex.lower_bound = -1000.0
+  app.py:2827:    ex.upper_bound = 1000.0
+  app.py:2828:    # Biomass reaction consumes substrate -> biomass
+  app.py:2829:    bio = Reaction("BIOMASS")
+  app.py:2830:    bio.add_metabolites({s: -1.0})
+  app.py:2831:    bio.lower_bound = 0.0
+  app.py:2856:        Vmax_b = st.number_input(f"Vmax {microbe_b} (mmol/gDW/h)", value=10.0, step=0.1, key="dfba_vmax_b")
+  app.py:2857:        Km_b = st.number_input(f"Km {microbe_b} (mM)", value=0.5, step=0.1, key="dfba_km_b")
+  app.py:2858:        run = st.button("🚀 Run dFBA", key="dfba_run")
+  app.py:2859:        run_tests = st.button("Run dFBA sanity tests", key="dfba_tests")
+  app.py:2860:
+> app.py:2861:    if not _HAS_COBRA:
+> app.py:2862:        st.error("COBRApy δεν είναι διαθέσιμο — εγκατέστησέ το με `pip install cobra` για να τρέξεις dFBA prototype.")
+  app.py:2863:        return
+  app.py:2864:
+  app.py:2865:    profiles = get_microbes()
+  app.py:2866:    pa = profiles[microbe_a]
+  app.py:2867:    pb = profiles[microbe_b]
+  app.py:2868:
+  app.py:2869:    def _run_dfba_simulation(S0_mM: float, duration_h: float, dt_h: float,
+  app.py:2870:                             Vmax_a: float, Km_a: float, Vmax_b: float, Km_b: float,
+  app.py:2871:                             biomass_conv: float, volume_l: float):
+  app.py:2872:        return run_dfba_simulation(
+  app.py:2873:            S0_mM=S0_mM,
+  app.py:2874:            duration_h=duration_h,
+  app.py:2875:            dt_h=dt_h,
+  app.py:2876:            Vmax_a=Vmax_a,
+  app.py:2877:            Km_a=Km_a,
+
