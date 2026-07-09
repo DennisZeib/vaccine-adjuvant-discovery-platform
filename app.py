@@ -1216,6 +1216,7 @@ _KNOWLEDGE_BASE: Dict[str, dict] = {
         "hill_n": 1.5,
         "note": "Ισχυρό PAMP· υψηλή ανοσογονικότητα αντισταθμίζεται από "
                 "κίνδυνο τοξικότητας ενδοτοξίνης σε υψηλές δόσεις.",
+        "citation": "ec50 is simulator-internal (toy units), not a real-world value. Real TLR4/LPS potency data was not found in literature search as of 2026-07.",
     },
     "mannan_polysaccharide": {
         "immunogenicity": 70.0,
@@ -1226,6 +1227,7 @@ _KNOWLEDGE_BASE: Dict[str, dict] = {
         "hill_n": 1.2,
         "note": "Μέτρια ανοσογονικότητα, πολύ καλό προφίλ ασφαλείας και "
                 "σταθερότητας. Καλός υποψήφιος για ήπιο adjuvant.",
+        "citation": "Mouse dose-response: 1-7mcg gives cellular immunity, over 7mcg gives humoral dominance (DOI 10.1007/s002620050449). ec50 above is simulator-internal toy units.",
     },
     "flagellin": {
         "immunogenicity": 80.0,
@@ -1237,6 +1239,7 @@ _KNOWLEDGE_BASE: Dict[str, dict] = {
         "note": "Καλά τεκμηριωμένο ανοσοδιεγερτικό μόριο (χρησιμοποιείται σε "
                 "ερευνητικές πλατφόρμες εμβολίων). Μειωμένη σταθερότητα λόγω "
                 "πρωτεϊνικής φύσης.",
+        "citation": "Real TLR5-binding EC50 = 2.4 pM (Smith et al. 2013, DOI 10.1002/bit.24903). Human vaccine dose-response threshold: 6-10mcg effective (DOI 10.1016/j.vaccine.2017.09.070). ec50 field above is simulator-internal toy units, NOT this real value - unit systems are incompatible without full model recalibration.",
     },
 }
 
@@ -3774,3 +3777,4 @@ st.sidebar.divider()
 st.sidebar.caption("🧬 Vaccine Adjuvant Discovery Platform · SQLite persistence")
 st.sidebar.caption(f"Έκδοση 5.0 · {datetime.now().strftime('%Y-%m-%d %H:%M')}")
 st.sidebar.caption(f"Καταγεγραμμένες εκτελέσεις: {count_history()}")
+
