@@ -75,6 +75,32 @@ causing the Hill dose-response curve to saturate near 1.0 regardless of
 input variation. Fixed by recalibrating `ec50` to the simulator's
 actual observed concentration ranges (commit `d4a6bac` and prior).
 
+## Growth kinetics correction: S. cerevisiae Y_xs (verified by simulation)
+
+Unlike E. coli K-12 (where the search only confirmed plausibility), a
+targeted search for S. cerevisiae growth kinetics found a real,
+specific discrepancy: the simulator's `Y_xs = 0.40` was roughly 2-4x
+higher than published wild-type biomass yield data (0.11 g/g glucose
+under Crabtree-positive conditions, up to 0.21 g/g in engineered
+Crabtree-relieved strains — DOI: 10.1016/j.synbio.2022.06.004).
+
+**Fix applied:** `Y_xs` recalibrated from 0.40 to 0.20 (documented
+middle estimate, not a precise fit — see inline citation in
+`create_default_microbes()`).
+
+**Verified by re-running the simulation** (not just a code change
+left unverified): Monte Carlo comparison of Saccharomyces cerevisiae
++ Bacillus licheniformis (glucose=100, duration=48h, n=60) after the
+fix showed mean score 61.4, std 1.0, with toxicity values in the
+79-126 range — consistent with the expected direction of the change
+(lower biomass yield per glucose unit shifts more carbon toward
+overflow/byproduct metabolites). Parameter sensitivity analysis on
+this run showed vaccination ratio as the dominant driver (Pearson
+r = -0.80), more than 3x the effect of culture duration (r = +0.24),
+a specific and non-obvious result that would not have been trustworthy
+before both the ec50 saturation bug and this yield-coefficient
+placeholder were corrected.
+
 ## Growth kinetics validation (E. coli K-12)
 
 A targeted EuropePMC search (July 2026) checked the simulator's default

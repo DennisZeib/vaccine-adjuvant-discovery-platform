@@ -776,7 +776,7 @@ def create_default_microbes() -> Dict[str, MicrobeProfile]:
             motile=False,
             mu_max=0.45,
             Ks=10.0,
-            Y_xs=0.40,
+            Y_xs=0.20,  # RECALIBRATED (was 0.40) - see citation below
             k_death=0.009,
             production={
                 "mannan_polysaccharide": (1.30, 0.08),
@@ -784,7 +784,14 @@ def create_default_microbes() -> Dict[str, MicrobeProfile]:
             },
             description="Ευκαρυωτική ζύμη. Το κυτταρικό της τοίχωμα είναι "
                          "πλούσιο σε μαννάνη (Dectin-1/TLR2)· παράγει αιθανόλη "
-                         "μέσω ζύμωσης (υψηλή τοξικότητα σε υψηλή γλυκόζη).",
+                         "μέσω ζύμωσης (υψηλή τοξικότητα σε υψηλή γλυκόζη). "
+                         "[Y_xs recalibrated July 2026: real wild-type "
+                         "S. cerevisiae biomass yield is ~0.11 g/g glucose "
+                         "under Crabtree-positive conditions, up to 0.21 g/g "
+                         "in engineered Crabtree-relieved strains (DOI "
+                         "10.1016/j.synbio.2022.06.004). Original toy value "
+                         "of 0.40 was ~2-4x too high. Set to 0.20 as a "
+                         "documented middle estimate, not a precise fit.]",
             allergy_risk=0.30,
             symptom_risk=0.22,
             study_note="Αυτό το είδος είναι πολύ χρήσιμο για μελέτες μαννάνης, αλλά απαιτεί προσοχή σε άτομα με ευαισθησία σε ζύμες ή έντονα ανοσολογικά ερεθίσματα.",
