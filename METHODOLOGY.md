@@ -83,13 +83,55 @@ actual observed concentration ranges (commit `d4a6bac` and prior).
   dose-response layer so real literature EC50 values can be used
   directly, rather than as documentation-only citations.
 - Literature-source EC50/kinetics for LPS specifically — currently
-  the largest gap.
+  the largest gap (see "LPS EC50 search" below for what was tried).
 - Validate `mu_max`/`Ks`/`Y_xs` growth parameters against published
   growth-curve data for at least the most commonly used organisms
   (E. coli K-12 is the best-studied candidate for this).
 - Add explicit uncertainty ranges (not just point estimates) once
   literature EC50s are properly integrated, reflecting real
   study-to-study variability.
+
+## LPS EC50 search: a documented gap, not a skipped step
+
+Two rounds of targeted EuropePMC literature search (July 2026) failed
+to locate a clean, absolute EC50 value (in molar or mass-concentration
+units) for native LPS's own TLR4/MD-2 binding potency — despite finding
+such values readily for flagellin (TLR5) and mannan-MUC1 (see
+`_KNOWLEDGE_BASE` citations above).
+
+**What was searched:** general LPS+TLR4+EC50 queries, then narrowed to
+the standardized E. coli O111:B4 reference material specifically (the
+most widely used reference endotoxin in immunology, with a WHO/NIBSC
+reference standard).
+
+**What was found instead:**
+- Relative sensitivity data: TLR4 receptor overexpression shifts LPS's
+  effective EC50 30-fold left; the LPS-resistant Tlr4(Lps-d) mutant
+  (found in C3H/HeJ mice) shifts it 2600-fold right (Poltorak et al.
+  1999, DOI: 10.1006/bcmd.1999.0262). These are fold-shifts under
+  genetic manipulation, not a baseline absolute value.
+- A 1983 paper (DOI: 10.1016/s0092-1157(83)80013-4) establishing a
+  *reference endotoxin* potency standard via collaborative Limulus
+  amebocyte lysate (LAL) gelation assay across 14 laboratories — this
+  confirms LPS potency is standardized in the field, but as an
+  operational/comparative gelation-endpoint unit, not a molar EC50.
+- A validated methodology exists (TLR4 HEK reporter-gene EC50 assays)
+  for measuring this directly, suggesting the number likely exists in
+  papers this search did not surface — this remains open for future
+  literature work.
+
+**Working hypothesis for why this is harder than flagellin:** LPS
+structure (particularly the lipid A moiety) varies substantially
+across Gram-negative bacterial species and even strains, unlike
+flagellin's more evolutionarily conserved TLR5-recognition domain.
+This may make a single universal "LPS EC50" less standard in the
+literature than a strain-specific one. This hypothesis is not yet
+verified against dedicated structural biology literature.
+
+**Current state:** `_KNOWLEDGE_BASE["polysaccharide_lps"]["ec50"]`
+remains simulator-internal (see Units section above), with no real
+citation available as of this writing. This is flagged deliberately
+rather than silently left unlabeled.
 
 ## Intended audience & use
 
