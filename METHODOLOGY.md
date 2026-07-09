@@ -75,6 +75,47 @@ causing the Hill dose-response curve to saturate near 1.0 regardless of
 input variation. Fixed by recalibrating `ec50` to the simulator's
 actual observed concentration ranges (commit `d4a6bac` and prior).
 
+## Growth kinetics validation (E. coli K-12)
+
+A targeted EuropePMC search (July 2026) checked the simulator's default
+E. coli K-12 growth parameters against published chemostat/continuous-
+culture literature:
+
+**Current simulator values** (`create_default_microbes()`):
+`mu_max = 0.85 /h`, `Ks = 5.0 mM`, `Y_xs = 0.50`, `k_death = 0.015 /h`.
+
+**mu_max — plausible, weakly supported.** A 2005 glucose-limited
+chemostat study (E. coli K-12 strain TG1, 28°C) observed washout
+occurring near a dilution rate of 0.4/h (DOI: 10.1099/mic.0.27481-0).
+Since a chemostat's dilution rate cannot exceed `mu_max` without
+washout, this implies a real `mu_max` somewhat above 0.4/h under those
+(cooler, minimal-media) conditions — consistent with commonly cited
+37°C glucose `mu_max` values in the 0.7-1.0/h range reported elsewhere
+in the microbiology literature. The simulator's 0.85/h sits within this
+plausible range.
+
+**Y_xs — not contradicted, not confirmed.** No single clean yield-
+coefficient value was found in this search batch; multiple fed-batch
+and chemostat studies discuss yield coefficients in a broadly similar
+range without providing a directly comparable reference number.
+
+**Ks — unresolved, flagged uncertain.** No glucose half-saturation
+constant was found in this literature batch. Other published estimates
+for E. coli's glucose Ks (outside this specific search) are commonly
+cited in the 0.01-0.2 mM range, well below the simulator's `Ks = 5.0`.
+Given the simulator's concentrations are toy units rather than real mM
+(see Units section above), this discrepancy may not have the same
+practical impact as the LPS ec50 mismatch did, but it has not been
+resolved and should not be assumed correct.
+
+**k_death** was not addressed by this literature batch.
+
+**Conclusion:** growth kinetics were built with plausible order-of-
+magnitude values for the best-supported parameter (`mu_max`), unlike
+the arbitrary placeholder `ec50` values that caused the earlier
+Monte Carlo bug. `Ks` remains the most uncertain parameter and is a
+candidate for future targeted literature search.
+
 ## Future work
 
 - Full unit-system recalibration: define what one "toy unit" of
@@ -84,9 +125,11 @@ actual observed concentration ranges (commit `d4a6bac` and prior).
   directly, rather than as documentation-only citations.
 - Literature-source EC50/kinetics for LPS specifically — currently
   the largest gap (see "LPS EC50 search" below for what was tried).
-- Validate `mu_max`/`Ks`/`Y_xs` growth parameters against published
-  growth-curve data for at least the most commonly used organisms
-  (E. coli K-12 is the best-studied candidate for this).
+- Resolve E. coli K-12's `Ks` value against dedicated glucose
+  half-saturation literature (see "Growth kinetics validation" above).
+- Validate growth kinetics for the other 15 microbes in
+  `create_default_microbes()` — only E. coli K-12 has been checked
+  so far.
 - Add explicit uncertainty ranges (not just point estimates) once
   literature EC50s are properly integrated, reflecting real
   study-to-study variability.
